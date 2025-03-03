@@ -8,8 +8,6 @@ export default function Navbar() {
       <div>
         <ul>
           <li>
-          </li>
-          <li>
             <Page>
                 <a>Sign in</a>
             </Page>
@@ -38,7 +36,6 @@ const Page = styled.div`
 `;
 
 const Container = styled.nav`
-  /* background-color: #191919; */
   background-color: #353755;
   color: white;
   display: flex;

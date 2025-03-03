@@ -3,12 +3,14 @@ import styled from "styled-components"
 
 import Navbar from "../components/Navbar.js"
 import PromptMenu from "../components/PromptMenu.js"
+import Calendar from "../components/Calendar.js"
 
 const Dashboard = () => {
     return (
         <Content>
             <Navbar/>
             <PageContainer>
+                <Calendar/>
                 <PromptMenu/>
             </PageContainer>
         </Content>
