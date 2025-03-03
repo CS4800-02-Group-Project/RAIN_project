@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router";
 import Dashboard from "src\pages\Dashboard.js";
 
-// added just in case but not used
+// added just in case but not used, used for correct pathing of different pages
 
 export default function Router() {
   const Layout = () => {

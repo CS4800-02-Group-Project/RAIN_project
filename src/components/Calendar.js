@@ -8,28 +8,32 @@ import "react-calendar/dist/Calendar.css";
 
 export default function InteractiveCalendar() {
 
-    // allows for dates to be set 
+    // allows for dates to be set, updates on date selected 
     const [date, setDate] = useState(new Date());
-    const [events, setEvents] = useState({
-        "2025-03-05": "Project Deadline",
-        "2025-03-10": "Assignment Due",
-        "2025-03-15": "Exam Date",
-    });
 
     // on event a date is clicked
     const handleDateClick = (selectedDate) => {
         setDate(selectedDate);
     };
 
-    // Format date as YYYY-MM-DD
+    // hardcoded example dates
+    const [events, setEvents] = useState({
+        "2025-03-05": "Project Deadline",
+        "2025-03-10": "Assignment Due",
+        "2025-03-15": "Exam Date",
+    });
+
+    // Format date as Year/Month/Day
     const formattedDate = date.toISOString().split("T")[0]; 
+
+    // create add event function
 
     return (
         <CalendarContainer>
             <StyledCalendar onChange={handleDateClick} value={date} />
             <EventDetails>
                 <h3>Selected Date: {formattedDate}</h3>
-                <p>{events[formattedDate] ? `📌 ${events[formattedDate]}` : "No events"}</p>
+                <p>{events[formattedDate] ? `${events[formattedDate]}` : "No events"}</p>
             </EventDetails>
         </CalendarContainer>
     );
@@ -44,7 +48,7 @@ const CalendarContainer = styled.div`
     border: 2px solid #ccc;
     border-radius: 8px;
     background: #E0E4EE;
-    padding: 10px;
+    padding: 30px;
 `;
 
 const StyledCalendar = styled(Calendar)`

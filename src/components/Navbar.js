@@ -18,6 +18,8 @@ export default function Navbar() {
   );
 }
 
+// Temporary navbar theme until further changes needed
+
 const Name = styled.div`
   text-align: center;
   flex: 1;
