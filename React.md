@@ -1,3 +1,14 @@
+# Before running NPM
+
+Install Node.js either through Powershell or installer and follow the instructions to install Node.js
+https://nodejs.org/en/download/
+
+Check if NPM can be run on your machine
+Node -v will check if Node is properly installed
+npm -v will check if npm can be properly called
+
+If "cannot be loaded because running scripts is disabled on this system" appears, you may have to run Powershell as administrator and "Set-ExecutionPolicy RemoteSigned" to be able to run npm
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
