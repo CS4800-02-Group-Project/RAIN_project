@@ -105,8 +105,6 @@ async def ai_response(request: ResearchRequest):
     return {"response": f"Server says: Answering {request.prompt} as Pong!"}
 
 
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
-
-research("Game Design")
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
