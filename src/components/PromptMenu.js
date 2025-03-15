@@ -1,26 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 export default function PromptMenu() {
     const [messages, setMessages] = useState([]);  // store chat history
     const [input, setInput] = useState("");        // store user input
 
-    const handleSend = () => {
+    useEffect(() => {
+        console.log(messages);
+    }, [messages]);
+    
+    const handleSend = async () => {
         // stop blank messages
         if (!input.trim()) {
             return; 
         }
 
-        // update the chat history from user
-        const userMessage = { text: input, sender: "user" };
-        setMessages([...messages, userMessage]); 
+        // Update User Input in Chat History
+        const userMessage = { text: input, sender: "User" };
+        setMessages([...messages, userMessage]);
 
-        // Example of AI response, remove later for actual AI agent
-        // timeout used for simulating response
-        setTimeout(() => {
-            const aiResponse = { text: `AI Response to: "${input}"`, sender: "ai" };
-            setMessages((prev) => [...prev, aiResponse]); 
-        }, 1000);
+        // Try Send request to FastAPI backend
+        try { 
+            const response = await fetch("http://127.0.0.1:8000/api/research", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: input }),
+            });
+            const data = await response.json();
+            const aiResponse = { text: data.response, sender: "CrewAI"};
+            setMessages(prevMessages => [...prevMessages, aiResponse]);
+        } catch (error) {
+            console.error("Response fetching failed...", error)
+        }
 
         setInput(""); // Clear input field
     };
@@ -30,7 +41,7 @@ export default function PromptMenu() {
             <ChatHistory>
                 {messages.map((msg, index) => (
                     <Message key={index} sender={msg.sender}>
-                        {msg.text}
+                        {[msg.sender, ": ", msg.text]}
                     </Message>
                 ))}
             </ChatHistory>

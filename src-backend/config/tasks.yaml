@@ -1,0 +1,41 @@
+research_task:
+  description: >
+    Conduct a thorough research on {topic}.
+    Gather a list of books, research articles, industry whitepapers, and credible expert reports related to {topic}.
+    Ensure all sources are legitimate, referenced, and suitable for academic or professional research.
+    Each entry must include:
+      - **Title**: Name of the publication
+      - **Author(s)**
+      - **Year of publication**
+      - **Abstract**: A short summary (2-3 sentences)
+      - **Source**: Where it was published (journal name, conference, institution, or organization)
+      - **DOI/URL** (if applicable)
+      - **Citations**: Provide APA, MLA, IEEE, and Chicago citation formats.
+    Prioritize English-language sources, but older foundational works are acceptable.
+  expected_output: >
+    A structured list of at least 10+ scholarly and referenceable sources on {topic}, formatted with:
+      - **Title**: The publication name **Author(s)**: The author(s) of the work **Year**: The publication year**Abstract**: A brief 2-3 sentence summary **Source**: Where it was published (journal, institution, organization) **DOI/URL**: Direct link or DOI if available **Citations**: Formatted in APA, MLA, IEEE, and Chicago styles.
+  agent: researcher
+
+reporting_task:
+  description: >
+    Review the gathered research and structure it into a clear markdown report.
+    The report should be properly formatted with headings, bullet points, and citation styles.
+    Each entry should be formatted as:
+    ### **Title**: [Name]
+    - **Author(s)**: [Authors]
+    - **Year**: [Year]
+    - **Abstract**: [Brief summary]
+    - **Source**: [Journal, Institution, Organization]
+    - **DOI/URL**: [Link if available]
+    #### **Citations**:
+    - **APA**: [Formatted citation]
+    - **MLA**: [Formatted citation]
+    - **IEEE**: [Formatted citation]
+    - **Chicago**: [Formatted citation]
+    Ensure all formatting is correct and sources are properly attributed.
+  expected_output: >
+    A fully structured markdown report containing properly formatted citations in APA, MLA, IEEE, and Chicago styles.
+    Formatted as markdown without '```'.
+  agent: reporting_analyst
+  output_file: report.md
