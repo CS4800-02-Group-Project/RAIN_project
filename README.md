@@ -16,6 +16,7 @@ Check current `report.md` under `src-backend` for output from CrewAI with the to
 
 Code modified under `src/components/PromptMenu.js`
 
-Next goal: output crewAI in json file and show in frontend webpage. (this wont take too long, problly half day work)
+~~Next goal: output crewAI in json file and show in frontend webpage. (this wont take too long, problly half day work)~~
+Updated on 3/16: Json output have been updated, DOI_URL have bugs that not able to reach, do not use for now.
 
 Endpoint from backend is ready for setup, chat with me if any endpoint needed.
