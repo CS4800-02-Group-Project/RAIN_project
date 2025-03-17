@@ -1,12 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
-import Dashboard from './pages/Dashboard.js';
+import React from "react";
+import Router from "../src/components/Router.js";
 
 function App() {
-  return (
-    <>
-      <Dashboard/>
-    </>
+  return ( <Router/>
   );
 }
 

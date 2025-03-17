@@ -1,7 +1,6 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router";
-import Dashboard from "src\pages\Dashboard.js";
-
-// added just in case but not used, used for correct pathing of different pages
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import Dashboard from "../pages/Dashboard";
+import Login from "../pages/Login"
 
 export default function Router() {
   const Layout = () => {
@@ -20,6 +19,7 @@ export default function Router() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/login" element={<Login/>} />
           </Route>
         </Routes>
       </BrowserRouter>
