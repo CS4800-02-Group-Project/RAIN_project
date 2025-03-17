@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import asyncio
 import warnings
 
 from datetime import datetime
@@ -35,29 +36,6 @@ def run():
         raise Exception(f"An error occurred while running the crew: {e}")
 
 
-def train():
-    """
-    Train the crew for a given number of iterations.
-    """
-    inputs = {
-        "topic": "AI LLMs"
-    }
-    try:
-        Backend().crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
-
-    except Exception as e:
-        raise Exception(f"An error occurred while training the crew: {e}")
-
-def replay():
-    """
-    Replay the crew execution from a specific task.
-    """
-    try:
-        Backend().crew().replay(task_id=sys.argv[1])
-
-    except Exception as e:
-        raise Exception(f"An error occurred while replaying the crew: {e}")
-
 def test():
     """
     Test the crew execution and returns the results.
@@ -81,7 +59,7 @@ def research(InputTopic):
     }
     
     try:
-        Backend().crew().kickoff(inputs=inputs)
+        return Backend().crew().kickoff(inputs=inputs)
     except Exception as e:
         raise Exception(f"An error occurred while running the crew: {e}")
 
@@ -101,8 +79,8 @@ class ResearchRequest(BaseModel):
 
 @app.post("/api/research")
 async def ai_response(request: ResearchRequest):
-    research(request.prompt)
-    return {"response": f"Server says: Answering {request.prompt} as Pong!"}
+    result = research(request.prompt)
+    return {"response": f"{result}"}
 
 
 if __name__ == "__main__":

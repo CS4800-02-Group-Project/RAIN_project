@@ -1,6 +1,22 @@
+from typing import Dict, List, Optional
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
-import yaml
+from pydantic import BaseModel, Field
+
+class ResearchEntry(BaseModel):
+    """Represents a single research source with detailed metadata."""
+    title: str = Field(description="Title of the research paper, book, or article.")
+    authors: List[str] = Field(description="List of authors who contributed to the publication.")
+    year: int = Field(description="Year of publication.")
+    abstract: str = Field(description="A brief 2-3 sentence summary of the research paper.")
+    source: str = Field(description="The journal, conference, or institution where the research was published.")
+    doi_url: Optional[str] = Field(default=None, description="DOI link or official URL to the research paper (if available).")
+    citations: Dict[str, str] = Field(default_factory=dict, description="Formatted citations in APA, MLA, IEEE, and Chicago styles.")
+
+class ResearchReport(BaseModel):
+    """Structured research report containing multiple research entries."""
+    topic: str = Field(description="The overall research topic or field being investigated.")
+    entries: List[ResearchEntry] = Field(description="A list of research entries, each containing detailed metadata about a source.")
 
 @CrewBase
 class Backend():
@@ -28,17 +44,17 @@ class Backend():
     def research_task(self) -> Task:
         return Task(
             config=self.tasks_config['research_task'],
-            expected_output="A structured list of at least 10+ scholarly and referenceable sources, including title, author, year, abstract, source, DOI/URL, and citations in APA, MLA, IEEE, and Chicago styles.",
             agent=self.researcher(),
+            output_json=ResearchEntry
         )
 
     @task
     def reporting_task(self) -> Task:
         return Task(
             config=self.tasks_config['reporting_task'],
-            expected_output="A structured markdown report containing at least 10+ referenced sources formatted with title, author, year, abstract, source, DOI/URL, and citations in APA, MLA, IEEE, and Chicago styles.",
             agent=self.reporting_analyst(),
-            output_file='report.md'
+            output_json=ResearchReport,  # Outputs the full structured research report
+            output_file="report.json"
         )
 
     @crew
