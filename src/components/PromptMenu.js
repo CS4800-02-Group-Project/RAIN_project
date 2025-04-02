@@ -1,27 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 export default function PromptMenu() {
     const [messages, setMessages] = useState([]);  // store chat history
     const [input, setInput] = useState("");        // store user input
 
-    const handleSend = () => {
-        // stop blank messages
-        if (!input.trim()) {
-            return; 
+    useEffect(() => {
+        console.log(messages);
+    }, [messages]);
+
+    /** 
+     * Create event based on selection from Calendar, sent request, capture request by CrewAI and create prompt message in chat box
+     * */ 
+    const handleSend = async () => {
+        if (!input.trim()) return; 
+    
+        // Update chat history with user message
+        const userMessage = { text: input, sender: "User" };
+        setMessages([...messages, userMessage]);
+    
+        try { 
+            // continue testing
+            // Call Express instead of FastAPI
+            // const response = await fetch("http://localhost:3001/api/research", {
+            //     method: "POST",
+            //     headers: { "Content-Type": "application/json" },
+            //     body: JSON.stringify({ prompt: input }),
+            // });
+
+            const response = await fetch("http://localhost:3001/api/test", {
+                method: "POST", 
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ prompt: "some input" })
+            });
+            const data = await response.json();
+            const aiResponse = { text: data.response, sender: "AI" };
+            setMessages(prevMessages => [...prevMessages, aiResponse]);
+        } catch (error) {
+            console.error("Response fetching failed...", error);
         }
-
-        // update the chat history from user
-        const userMessage = { text: input, sender: "user" };
-        setMessages([...messages, userMessage]); 
-
-        // Example of AI response, remove later for actual AI agent
-        // timeout used for simulating response
-        setTimeout(() => {
-            const aiResponse = { text: `AI Response to: "${input}"`, sender: "ai" };
-            setMessages((prev) => [...prev, aiResponse]); 
-        }, 1000);
-
+    
         setInput(""); // Clear input field
     };
 
@@ -30,7 +50,7 @@ export default function PromptMenu() {
             <ChatHistory>
                 {messages.map((msg, index) => (
                     <Message key={index} sender={msg.sender}>
-                        {msg.text}
+                        {[msg.sender, ": ", msg.text]}
                     </Message>
                 ))}
             </ChatHistory>

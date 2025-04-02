@@ -1,0 +1,46 @@
+research_task:
+  description: >
+    Conduct a thorough research on {topic}.
+    Gather a list of books, research articles, industry whitepapers, and credible expert reports related to {topic}.
+    Ensure all sources are legitimate, referenced, and suitable for academic or professional research.
+    If a field is not applicable, leave it blank. **Never fabricate sources.**  
+    Prioritize English-language sources, but older foundational works are acceptable.
+
+  expected_output: >
+    A JSON array of at least 10+ referenced sources, where each entry follows the ResearchEntry model:
+    [
+      {
+        'title': 'Example Paper on AI',
+        'authors': ['John Doe', 'Jane Smith'],
+        'year': 2023,
+        'abstract': 'This study explores advancements in AI-driven research.',
+        'source': 'IEEE Transactions on AI',
+        'doi_url': 'https://doi.org/10.1234/example',
+        'citations': {
+          'APA': 'Doe, J., & Smith, J. (2023). Example Paper on AI. IEEE Transactions on AI.',
+          'MLA': 'Doe, John, and Jane Smith. 'Example Paper on AI.' IEEE Transactions on AI, 2023.',
+          'IEEE': 'J. Doe and J. Smith, 'Example Paper on AI,' IEEE Transactions on AI, 2023.',
+          'Chicago': 'Doe, John, and Jane Smith. 2023. 'Example Paper on AI.' IEEE Transactions on AI.'
+        }
+      },
+      ...
+    ]
+
+  agent: researcher
+
+reporting_task:
+  description: >
+    Review the gathered research and structure it into a well-formatted JSON report.
+    The report should follow the ResearchReport model, containing the topic and a list of referenced sources.
+
+  expected_output: >
+    A structured JSON object following the ResearchReport model, containing the topic and at least 10+ referenced sources.
+    The final JSON should be formatted and validated as:
+    {
+      'topic': '{topic}',
+      'entries': [ResearchEntry, ResearchEntry, ...]
+    }
+
+  agent: reporting_analyst
+  context: [research_task]
+  output_file: report.json

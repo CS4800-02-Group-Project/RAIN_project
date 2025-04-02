@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 import Calendar from "react-calendar";
@@ -10,6 +10,24 @@ export default function InteractiveCalendar() {
 
     // allows for dates to be set, updates on date selected 
     const [date, setDate] = useState(new Date());
+    const [events, setEvents] = useState({});
+
+    // Format date as Year/Month/Day
+    const formattedDate = date.toISOString().split("T")[0]; 
+
+    // api/assignments
+    useEffect(() => {
+        fetch("http://localhost:3001/assignments") // Fetch from Express.js
+            .then(response => response.json())
+            .then(data => {
+                const formattedEvents = data.assignments.reduce((acc, event) => {
+                    acc[event.due_date] = event.title;
+                    return acc;
+                }, {});
+                setEvents(formattedEvents);
+            })
+            .catch(error => console.error("Error fetching assignments:", error));
+    }, []);
 
     // on event a date is clicked
     const handleDateClick = (selectedDate) => {
@@ -17,16 +35,11 @@ export default function InteractiveCalendar() {
     };
 
     // hardcoded example dates
-    const [events, setEvents] = useState({
-        "2025-03-05": "Project Deadline",
-        "2025-03-10": "Assignment Due",
-        "2025-03-15": "Exam Date",
-    });
-
-    // Format date as Year/Month/Day
-    const formattedDate = date.toISOString().split("T")[0]; 
-
-    // create add event function
+    // const [events, setEvents] = useState({
+    //     "2025-03-05": "Project Deadline",
+    //     "2025-03-10": "Assignment Due",
+    //     "2025-03-15": "Exam Date",
+    // });
 
     return (
         <CalendarContainer>
@@ -68,3 +81,16 @@ const EventDetails = styled.div`
     width: 100%;
 `;
 
+const AddEventButton = styled.button`
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #4CAF50;
+    color : white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #45a049;
+    }
+`

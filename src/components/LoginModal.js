@@ -3,34 +3,58 @@ import styled from "styled-components";
 
 const LoginModal = () => {
     const [isSignUp, setIsSignUp] = useState(false);
+    const [formData, setFormData] = useState({
+      accountName: "",
+      email: "",
+      password: "",
+    });
+
+    // Handle input changes
+    const handleChange = (e) => {
+      setFormData({...formData, [e.target.name]: e.target.value});
+    };
+
+    // Handle form submission
+    const handleSubmit = async(e) => {
+      e.preventDefault();
+
+      const endpoint = isSignUp ? "/api/signup" : "/api/signin";
+
+      const requestData = isSignUp ? { accountName: formData.accountName, email: formData.email, password: formData.password } : { email: formData.email, password: formData.password };
+
+      console.log("Data sent: ", requestData);
+
+      // backend waiting
+
+    };
   
     return (
       <FormContainer>
-        <FormBox>
-          <h2>{isSignUp ? "Sign Up" : "Sign In"}</h2>
-  
-          <Form>
-            {isSignUp && (
-              <>
-                <Label>Account Name</Label>
-                <Input type="text" placeholder="Enter your account name" />
-              </>
-            )}
-  
-            <Label>School Email</Label>
-            <Input type="email" placeholder="Enter your school email" />
-  
-            <Label>Password</Label>
-            <Input type="password" placeholder="Enter your password" />
-  
-            <SubmitButton>{isSignUp ? "Sign Up" : "Sign In"}</SubmitButton>
-          </Form>
-  
-          <ToggleText onClick={() => setIsSignUp(!isSignUp)}>
-            {isSignUp ? "Already have an account? Sign In" : "New here? Sign Up"}
-          </ToggleText>
-        </FormBox>
-      </FormContainer>
+      <FormBox>
+        <h2>{isSignUp ? "Sign Up" : "Sign In"}</h2>
+
+        <Form onSubmit={handleSubmit}>
+          {isSignUp && (
+            <>
+              <Label>Account Name</Label>
+              <Input type="text" name="accountName" placeholder="Enter your account name" value={formData.accountName} onChange={handleChange} />
+            </>
+          )}
+
+          <Label>School Email</Label>
+          <Input type="email" name="email" placeholder="Enter your school email" value={formData.email} onChange={handleChange} />
+
+          <Label>Password</Label>
+          <Input type="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} />
+
+          <SubmitButton type="submit">{isSignUp ? "Sign Up" : "Sign In"}</SubmitButton>
+        </Form>
+
+        <ToggleText onClick={() => setIsSignUp(!isSignUp)}>
+          {isSignUp ? "Would You Like To Sign In?" : "Would You Like To Sign Up?"}
+        </ToggleText>
+      </FormBox>
+    </FormContainer>
     );
   };
   
