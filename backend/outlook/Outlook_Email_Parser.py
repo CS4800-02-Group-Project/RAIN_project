@@ -1,11 +1,12 @@
 import re
 import threading
 import webbrowser
-import config
+import config as config
 from flask import Flask, redirect, render_template_string, url_for, session, request
 import msal
 import requests
 import os
+from bs4 import BeautifulSoup
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -14,7 +15,7 @@ app.secret_key = os.urandom(24).hex()
 # Microsoft App Credentials
 TENANT_ID = "common"
 AUTHORITY = f"https://login.microsoftonline.com/{TENANT_ID}"
-REDIRECT_URI = "http://localhost:5000/getToken"
+REDIRECT_URI = "http://localhost:4999/getToken"
 SCOPES = ["User.Read", "Mail.Read"]
 
 # MSAL Instance
@@ -96,14 +97,26 @@ def emails():
     """)
 
 def extract_assignment_title(body):
-    """Extracts assignment title after 'Assignment Created - '"""
-    match = re.search(r"Assignment Created - (.*?)(\n|$)", body)
-    return match.group(1).strip() if match else ""
+    """ Extracts ALL assignment titles after 'Assignment Created - ' and 'Assignment Due Date Changed: '
+        Stores the titles in a list.
+    """
+    pattern = r"(Assignment Created - |Assignment Due Date Changed: )(.*?)(?=\s*due:|\n|$)"
+    matches = re.findall(pattern, body)
+    titles = [match[1].strip() for match in matches]    # extract just the assignment titles
+    return titles   # returns LIST of titles
 
 def extract_due_date(body):
-    """Extracts due date after 'due: '"""
-    match = re.search(r"due: (.*?)(\n|$)", body)
-    return match.group(1).strip() if match else ""
+    """ Extracts ALL due dates after 'due: '
+        Stores dates in a list.
+    """
+    pattern = r"due:\s*(.*?)(?=\s*Click|\n|$)"
+    due_dates = re.findall(pattern, body)   # extract just the due dates
+    return due_dates   # returns LIST of dates
+
+def clean_HTML(html_content):
+    """Cleans HTML tags and returns plain text"""
+    soup = BeautifulSoup(html_content, "html.parser")
+    return soup.get_text(separator=" ")  # Convert HTML to plain text
 
 def reformat_emails():
     """Reads emails.txt, extracts assignments, and writes formatted data to output.txt"""
@@ -118,11 +131,17 @@ def reformat_emails():
 
     for email in emails:
         if "Recent Canvas Notifications" in email:  # Only process relevant emails
-            assignment_title = extract_assignment_title(email)
-            due_date = extract_due_date(email)
+            email = clean_HTML(email)   # removes all HTML tags
 
-            if assignment_title and due_date and due_date != "No Due Date":
-                filtered_assignments.append(f"{assignment_title}: {due_date}")
+            assignment_titles = extract_assignment_title(email)
+            due_dates = extract_due_date(email)
+
+            for title, date in zip(assignment_titles, due_dates):
+                # currently not filtering "No Due Date assignments, leaving it up to AI agent"
+                filtered_assignments.append(f"{title}: {date}")
+
+            # if assignment_title and due_date and due_date != "No Due Date":
+            #     filtered_assignments.append(f"{assignment_title}: {due_date}")
 
     if filtered_assignments:
         with open("output.txt", "w", encoding="utf-8") as file:
@@ -140,4 +159,4 @@ def open_browser():
 
 if __name__ == "__main__":
     threading.Timer(1, open_browser).start()
-    app.run(debug=True, use_reloader=False)
+    app.run(debug=True, host="127.0.0.1", port=4999, use_reloader=False)
