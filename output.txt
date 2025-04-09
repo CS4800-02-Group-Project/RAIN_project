@@ -1,0 +1,18 @@
+Hw 6, MAT 2250.02 (S25-Regular) Lin Alg Apps to Diff Eqtns: Apr 23 at 11:59pm
+========================================
+5-Multiplication Division, CS 3650.01 (S25-Regular) Computer Architecture: Apr 10 at 11:59pm
+========================================
+6-Laches Flip Flops, CS 3650.01 (S25-Regular) Computer Architecture: Apr 15 at 11:59pm
+========================================
+7-K-map, CS 3650.01 (S25-Regular) Computer Architecture: Apr 17 at 11:59pm
+========================================
+8-From Flip Flop to Flip Flop, CS 3650.01 (S25-Regular) Computer Architecture: Apr 22 at 11:59pm
+========================================
+9-Asych Counter, CS 3650.01 (S25-Regular) Computer Architecture: Apr 24 at 11:59pm
+========================================
+10-Synch Counter, CS 3650.01 (S25-Regular) Computer Architecture: Apr 29 at 11:59pm
+========================================
+11-Shift and Rotate, CS 3650.01 (S25-Regular) Computer Architecture: May 1 at 11:59pm
+========================================
+Quiz1_Overnight, CS 2600.04 (S25-Regular) Systems Programming: Mar 28 at 11:59pm
+========================================
