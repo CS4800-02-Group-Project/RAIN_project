@@ -1,29 +1,40 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { CalendarProvider } from '../context/CalendarContext';
+import Navbar from './Navbar';
+import InteractiveCalendar from './Calendar';
+import PromptMenu from './PromptMenu';
 import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login"
 
-export default function Router() {
-  const Layout = () => {
+const Layout = () => {
     return (
-      <>
-        <main>
-          <Outlet />
-        </main>
-      </>
+        <>
+            <Navbar />
+            <main>
+                <Outlet />
+            </main>
+        </>
     );
-  };
+};
 
-  const BrowserRoutes = () => {
+export default function AppRouter() {
     return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/login" element={<Login/>} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+        <Router>
+            <CalendarProvider>
+                <Routes>
+                    <Route element={<Layout />}>
+                        <Route path="/" element={
+                            <div style={{ display: 'flex', gap: '20px', padding: '20px' }}>
+                                <InteractiveCalendar />
+                                <PromptMenu />
+                            </div>
+                        } />
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/login" element={<Login/>} />
+                    </Route>
+                </Routes>
+            </CalendarProvider>
+        </Router>
     );
-  };
-  return <BrowserRoutes />;
 }

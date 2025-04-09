@@ -1,7 +1,6 @@
 import React from "react"
 import styled from "styled-components"
 
-import Navbar from "../components/Navbar.js"
 import PromptMenu from "../components/PromptMenu.js"
 import Calendar from "../components/Calendar.js"
 
@@ -10,36 +9,41 @@ import Calendar from "../components/Calendar.js"
 const Dashboard = () => {
     return (
         <Content>
-            <Navbar/>
             <PageContainer>
-              <Section>
-                <Calendar/>
-              </Section>
-              <Section>
-                <PromptMenu/>
-              </Section>
+                <Section>
+                    <Calendar />
+                </Section>
+                <Section>
+                    <PromptMenu />
+                </Section>
             </PageContainer>
         </Content>
     )
 }
 
 const Content = styled.div`
-  background-color: #f6f6f6;
-  min-height: 100vh;
+    background-color: #f6f6f6;
+    min-height: 100vh;
+    padding-top: 20px;
 `;
 
 const PageContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
-  padding: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 `;
 
 const Section = styled.div`
-  padding: 70px 30px; 
-  border: 5px;
+    flex: 1;
+    min-width: 300px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
-
 
 export default Dashboard;

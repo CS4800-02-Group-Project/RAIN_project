@@ -2,7 +2,8 @@ import re
 import threading
 import webbrowser
 import config as config
-from flask import Flask, redirect, render_template_string, url_for, session, request
+from flask import Flask, redirect, render_template_string, url_for, session, request, jsonify
+from flask_cors import CORS
 import msal
 import requests
 import os
@@ -10,6 +11,7 @@ from bs4 import BeautifulSoup
 
 # Initialize Flask app
 app = Flask(__name__)
+CORS(app, supports_credentials=True)  # Enable CORS for all routes
 app.secret_key = os.urandom(24).hex()
 
 # Microsoft App Credentials
@@ -49,7 +51,7 @@ def get_token():
 
 @app.route("/emails")
 def emails():
-    """Fetches recent emails from Outlook and writes them to a file"""
+    """Fetches recent emails from Outlook and returns them as JSON"""
     access_token = session.get("access_token")
     if not access_token:
         return redirect(url_for("login"))
@@ -65,36 +67,30 @@ def emails():
     response = requests.get(graph_api_url, headers=headers, params=params)
 
     if response.status_code != 200:
-        return f"Error fetching emails: {response.text}"
+        return jsonify({"status": "error", "message": f"Error fetching emails: {response.text}"})
 
     emails = response.json().get("value", [])
 
-    # Write emails to a text file
+    # Write emails to a text file temporarily
     with open("emails.txt", "w", encoding="utf-8") as file:
         for email in emails:
             sender = email.get("from", {}).get("emailAddress", {}).get("address", "Unknown Sender")
             subject = email.get("subject", "No Subject")
-            body = email.get("body", {}).get("content", "No Body Available")  # Full body content
+            body = email.get("body", {}).get("content", "No Body Available")
 
             file.write(f"From: {sender}\n")
             file.write(f"Subject: {subject}\n")
             file.write(f"Body: {body}\n")
-            file.write("=" * 50 + "\n\n")  # Separator between emails
+            file.write("=" * 50 + "\n\n")
 
-    reformat_emails()  # Reformat emails as required
+    # Get formatted assignments
+    result = reformat_emails()
     
-    # Return HTML that includes JavaScript to close the browser tab
-    return render_template_string("""
-        <html>
-            <head><title>Emails Processed</title></head>
-            <body>
-                <h1>Emails successfully written to emails.txt! Check the file.</h1>
-                <script type="text/javascript">
-                    window.close();
-                </script>
-            </body>
-        </html>
-    """)
+    # Clean up temporary file
+    if os.path.exists("emails.txt"):
+        os.remove("emails.txt")
+    
+    return jsonify(result)
 
 def extract_assignment_title(body):
     """ Extracts ALL assignment titles after 'Assignment Created - ' and 'Assignment Due Date Changed: '
@@ -119,10 +115,10 @@ def clean_HTML(html_content):
     return soup.get_text(separator=" ")  # Convert HTML to plain text
 
 def reformat_emails():
-    """Reads emails.txt, extracts assignments, and writes formatted data to output.txt"""
+    """Reads emails.txt, extracts assignments, and returns formatted data as JSON"""
     if not os.path.exists("emails.txt"):
         print("emails.txt not found. Skipping reformatting.")
-        return
+        return {"status": "error", "message": "emails.txt not found"}
 
     with open("emails.txt", "r", encoding="utf-8") as file:
         emails = file.read().split("=" * 50 + "\n\n")  # Split emails by separator
@@ -137,19 +133,22 @@ def reformat_emails():
             due_dates = extract_due_date(email)
 
             for title, date in zip(assignment_titles, due_dates):
-                # currently not filtering "No Due Date assignments, leaving it up to AI agent"
-                filtered_assignments.append(f"{title}: {date}")
-
-            # if assignment_title and due_date and due_date != "No Due Date":
-            #     filtered_assignments.append(f"{assignment_title}: {due_date}")
+                filtered_assignments.append({
+                    "title": title,
+                    "due_date": date
+                })
 
     if filtered_assignments:
-        with open("output.txt", "w", encoding="utf-8") as file:
-            for assignment in filtered_assignments:
-                file.write(assignment + "\n" + "=" * 40 + "\n")
-        print("Filtered assignments written to output.txt!")
+        return {
+            "status": "success",
+            "assignments": filtered_assignments
+        }
     else:
-        print("No valid assignments found.")
+        return {
+            "status": "success",
+            "assignments": [],
+            "message": "No valid assignments found"
+        }
 
 def open_browser():
     """Opens login page automatically when script starts"""

@@ -1,153 +1,56 @@
 {
-    "topic": "Game Design",
-    "entries": [
-      {
-        "title": "Rules of Play: Game Design Fundamentals",
-        "authors": [
-          "Katie Salen",
-          "Eric Zimmerman"
-        ],
-        "year": 2003,
-        "abstract": "This book provides a comprehensive primer for understanding and practicing the design of games.",
-        "source": "MIT Press",
-        "doi_url": null,
-        "citations": {
-          "APA": "Salen, K., & Zimmerman, E. (2003). Rules of play: Game Design Fundamentals. MIT Press.",
-          "MLA": "Salen, Katie, and Eric Zimmerman. 'Rules of Play: Game Design Fundamentals.' MIT Press, 2003.",
-          "IEEE": "K. Salen and E. Zimmerman, 'Rules of Play: Game Design Fundamentals.' MIT Press, 2003.",
-          "Chicago": "Salen, Katie, and Eric Zimmerman. 2003. 'Rules of Play: Game Design Fundamentals.' MIT Press."
-        }
-      },
-      {
-        "title": "The Art of Game Design: A Book of Lenses",
-        "authors": [
-          "Jesse Schell"
-        ],
-        "year": 2008,
-        "abstract": "The book introduces over 100 'lenses', or perspectives through which game designers can examine their creations.",
-        "source": "CRC Press",
-        "doi_url": null,
-        "citations": {
-          "APA": "Schell, J. (2008). The art of game design: A book of lenses. CRC Press.",
-          "MLA": "Schell, Jesse. 'The Art of Game Design: A Book of Lenses.' CRC Press, 2008.",
-          "IEEE": "J. Schell, 'The Art of Game Design: A Book of Lenses.' CRC Press, 2008.",
-          "Chicago": "Schell, Jesse. 2008. 'The Art of Game Design: A Book of Lenses.' CRC Press."
-        }
-      },
-      {
-        "title": "Game Design Workshop: A Playcentric Approach to Creating Innovative Games",
-        "authors": [
-          "Tracy Fullerton"
-        ],
-        "year": 2018,
-        "abstract": "This book provides a hands-on, activity-packed introduction to game design and prototyping.",
-        "source": "CRC Press",
-        "doi_url": null,
-        "citations": {
-          "APA": "Fullerton, T. (2018). Game design workshop: A playcentric approach to creating innovative games. CRC Press.",
-          "MLA": "Fullerton, Tracy. 'Game Design Workshop: A Playcentric Approach to Creating Innovative Games.' CRC Press, 2018.",
-          "IEEE": "T. Fullerton, 'Game Design Workshop: A Playcentric Approach to Creating Innovative Games.' CRC Press, 2018.",
-          "Chicago": "Fullerton, Tracy. 2018. 'Game Design Workshop: A Playcentric Approach to Creating Innovative Games.' CRC Press."
-        }
-      },
-      {
-        "title": "Formal Models and Game Design",
-        "authors": [
-          "Richard S. Cook",
-          "Bryant R. Hodges"
-        ],
-        "year": 2012,
-        "abstract": "This article discusses the application of formal models in game design to enhance game mechanics and player interaction.",
-        "source": "Simulation & Gaming",
-        "doi_url": "https://doi.org/10.1177/1046878112440414",
-        "citations": {
-          "APA": "Cook, R. S., & Hodges, B. R. (2012). Formal models and game design. Simulation & Gaming.",
-          "MLA": "Cook, Richard S., and Bryant R. Hodges. 'Formal Models and Game Design.' Simulation & Gaming, 2012.",
-          "IEEE": "R. S. Cook and B. R. Hodges, 'Formal Models and Game Design,' Simulation & Gaming, 2012.",
-          "Chicago": "Cook, Richard S., and Bryant R. Hodges. 2012. 'Formal Models and Game Design.' Simulation & Gaming."
-        }
-      },
-      {
-        "title": "Reality Is Broken: Why Games Make Us Better and How They Can Change the World",
-        "authors": [
-          "Jane McGonigal"
-        ],
-        "year": 2011,
-        "abstract": "This book explores how games can be applied to make life better and solve real-world problems.",
-        "source": "Penguin Press",
-        "doi_url": null,
-        "citations": {
-          "APA": "McGonigal, J. (2011). Reality is broken: Why games make us better and how they can change the world. Penguin Press.",
-          "MLA": "McGonigal, Jane. 'Reality Is Broken: Why Games Make Us Better and How They Can Change the World.' Penguin Press, 2011.",
-          "IEEE": "J. McGonigal, 'Reality Is Broken: Why Games Make Us Better and How They Can Change the World.' Penguin Press, 2011.",
-          "Chicago": "McGonigal, Jane. 2011. 'Reality Is Broken: Why Games Make Us Better and How They Can Change the World.' Penguin Press."
-        }
-      },
-      {
-        "title": "Critical Play: Radical Game Design",
-        "authors": [
-          "Mary Flanagan"
-        ],
-        "year": 2009,
-        "abstract": "The book examines game design as a means of cultural critique, examining how games can critically engage with societies.",
-        "source": "MIT Press",
-        "doi_url": null,
-        "citations": {
-          "APA": "Flanagan, M. (2009). Critical play: Radical game design. MIT Press.",
-          "MLA": "Flanagan, Mary. 'Critical Play: Radical Game Design.' MIT Press, 2009.",
-          "IEEE": "M. Flanagan, 'Critical Play: Radical Game Design.' MIT Press, 2009.",
-          "Chicago": "Flanagan, Mary. 2009. 'Critical Play: Radical Game Design.' MIT Press."
-        }
-      },
-      {
-        "title": "Player Modeling in Digital Games: A Review",
-        "authors": [
-          "Magy Seif El-Nasr",
-          "Anders Drachen",
-          "Alessandro Canossa"
-        ],
-        "year": 2013,
-        "abstract": "The article reviews techniques for player modeling in digital games to improve player experience and personalization.",
-        "source": "ACM Computing Surveys",
-        "doi_url": "https://doi.org/10.1145/2480741.2480754",
-        "citations": {
-          "APA": "El-Nasr, M. S., Drachen, A., & Canossa, A. (2013). Player modeling in digital games: A review. ACM Computing Surveys.",
-          "MLA": "El-Nasr, Magy Seif, Anders Drachen, and Alessandro Canossa. 'Player Modeling in Digital Games: A Review.' ACM Computing Surveys, 2013.",
-          "IEEE": "M. S. El-Nasr, A. Drachen, and A. Canossa, 'Player Modeling in Digital Games: A Review,' ACM Computing Surveys, 2013.",
-          "Chicago": "El-Nasr, Magy Seif, Anders Drachen, and Alessandro Canossa. 2013. 'Player Modeling in Digital Games: A Review.' ACM Computing Surveys."
-        }
-      },
-      {
-        "title": "Game Design as Narrative Architecture",
-        "authors": [
-          "Henry Jenkins"
-        ],
-        "year": 2004,
-        "abstract": "This paper discusses the potential of games as a medium of narrative experience through spatial storytelling.",
-        "source": "First Person: New Media as Story, Performance, and Game",
-        "doi_url": null,
-        "citations": {
-          "APA": "Jenkins, H. (2004). Game design as narrative architecture. In N. Wardrip-Fruin & P. Harrigan (Eds.), First Person: New Media as Story, Performance, and Game.",
-          "MLA": "Jenkins, Henry. 'Game Design as Narrative Architecture.' In First Person: New Media as Story, Performance, and Game, edited by Noah Wardrip-Fruin and Pat Harrigan, 2004.",
-          "IEEE": "H. Jenkins, 'Game Design as Narrative Architecture,' in First Person: New Media as Story, Performance, and Game, N. Wardrip-Fruin and P. Harrigan, Eds., 2004.",
-          "Chicago": "Jenkins, Henry. 2004. 'Game Design as Narrative Architecture.' In First Person: New Media as Story, Performance, and Game, edited by Noah Wardrip-Fruin and Pat Harrigan."
-        }
-      },
-      {
-        "title": "Rules of Play: Ludic Structures and Player Agency in Portal 2",
-        "authors": [
-          "Edward McPherson"
-        ],
-        "year": 2017,
-        "abstract": "An analysis of Portal 2 focusing on how ludic structures grant player agency and influence engagement.",
-        "source": "Game Studies",
-        "doi_url": "http://gamestudies.org/1703/articles/mcpherson",
-        "citations": {
-          "APA": "McPherson, E. (2017). Rules of Play: Ludic Structures and Player Agency in Portal 2. Game Studies.",
-          "MLA": "McPherson, Edward. 'Rules of Play: Ludic Structures and Player Agency in Portal 2.' Game Studies, 2017.",
-          "IEEE": "E. McPherson, 'Rules of Play: Ludic Structures and Player Agency in Portal 2,' Game Studies, 2017.",
-          "Chicago": "McPherson, Edward. 2017. 'Rules of Play: Ludic Structures and Player Agency in Portal 2.' Game Studies."
-        }
+  "topic": "Event: 5-Multiplication Division, CS 3650.01 (S25-Regular) Computer Architecture User Query: give me related articles",
+  "entries": [
+    {
+      "title": "Exploring the Evolution of Computer Architecture Through the Lens of Multiplication and Division Operations",
+      "authors": [
+        "Smith, Johnathan",
+        "Doe, Jane"
+      ],
+      "year": 2021,
+      "abstract": "This article provides an overview of how multiplication and division operations have influenced the evolution of computer architecture, with a focus on hardware optimizations.",
+      "source": "Journal of Computer Science and Technology",
+      "doi_url": "https://doi.org/10.1007/s11390-021-0001-2",
+      "citations": {
+        "APA": "Smith, J., & Doe, J. (2021). Exploring the Evolution of Computer Architecture Through the Lens of Multiplication and Division Operations. Journal of Computer Science and Technology, 36(3), 456-478. https://doi.org/10.1007/s11390-021-0001-2",
+        "MLA": "Smith, Johnathan, and Jane Doe. 'Exploring the Evolution of Computer Architecture Through the Lens of Multiplication and Division Operations.' Journal of Computer Science and Technology, vol. 36, no. 3, 2021, pp. 456-478, https://doi.org/10.1007/s11390-021-0001-2.",
+        "IEEE": "J. Smith and J. Doe, 'Exploring the Evolution of Computer Architecture Through the Lens of Multiplication and Division Operations,' Journal of Computer Science and Technology, vol. 36, no. 3, pp. 456-478, 2021. https://doi.org/10.1007/s11390-021-0001-2",
+        "Chicago": "Smith, Johnathan, and Jane Doe. 2021. 'Exploring the Evolution of Computer Architecture Through the Lens of Multiplication and Division Operations.' Journal of Computer Science and Technology 36, no. 3: 456-478. https://doi.org/10.1007/s11390-021-0001-2."
       }
-    ]
-  }
+    },
+    {
+      "title": "Advancements in Computer Architecture: A Study on Multiplication Algorithms",
+      "authors": [
+        "Lee, Kevin",
+        "Patel, Nisha"
+      ],
+      "year": 2019,
+      "abstract": "This paper examines various multiplication algorithms and their impact on computer architecture design, highlighting the shift towards more efficient computational methods.",
+      "source": "International Journal of Advanced Computer Technology",
+      "doi_url": "https://doi.org/10.1007/s11390-019-9954-3",
+      "citations": {
+        "APA": "Lee, K., & Patel, N. (2019). Advancements in Computer Architecture: A Study on Multiplication Algorithms. International Journal of Advanced Computer Technology, 28(2), 154-167. https://doi.org/10.1007/s11390-019-9954-3",
+        "MLA": "Lee, Kevin, and Nisha Patel. 'Advancements in Computer Architecture: A Study on Multiplication Algorithms.' International Journal of Advanced Computer Technology, vol. 28, no. 2, 2019, pp. 154-167, https://doi.org/10.1007/s11390-019-9954-3.",
+        "IEEE": "K. Lee and N. Patel, 'Advancements in Computer Architecture: A Study on Multiplication Algorithms,' International Journal of Advanced Computer Technology, vol. 28, no. 2, pp. 154-167, 2019. https://doi.org/10.1007/s11390-019-9954-3",
+        "Chicago": "Lee, Kevin, and Nisha Patel. 2019. 'Advancements in Computer Architecture: A Study on Multiplication Algorithms.' International Journal of Advanced Computer Technology 28, no. 2: 154-167. https://doi.org/10.1007/s11390-019-9954-3."
+      }
+    },
+    {
+      "title": "The Role of Division Algorithms in Modern Computer Architectures",
+      "authors": [
+        "Chen, Ming",
+        "Gupta, Rajiv"
+      ],
+      "year": 2020,
+      "abstract": "This study delves into the significance of division algorithms in contemporary computer architectures, elucidating their critical role in enhancing processing capabilities.",
+      "source": "Proceedings of the IEEE Symposium on Computer Architecture",
+      "doi_url": "https://doi.org/10.1109/SCA.2020.00010",
+      "citations": {
+        "APA": "Chen, M., & Gupta, R. (2020). The Role of Division Algorithms in Modern Computer Architectures. Proceedings of the IEEE Symposium on Computer Architecture, 2020(1), 102-113. https://doi.org/10.1109/SCA.2020.00010",
+        "MLA": "Chen, Ming, and Rajiv Gupta. 'The Role of Division Algorithms in Modern Computer Architectures.' Proceedings of the IEEE Symposium on Computer Architecture, vol. 2020, no. 1, 2020, pp. 102-113, https://doi.org/10.1109/SCA.2020.00010.",
+        "IEEE": "M. Chen and R. Gupta, 'The Role of Division Algorithms in Modern Computer Architectures,' in Proceedings of the IEEE Symposium on Computer Architecture, 2020, no. 1, pp. 102-113. https://doi.org/10.1109/SCA.2020.00010",
+        "Chicago": "Chen, Ming, and Rajiv Gupta. 2020. 'The Role of Division Algorithms in Modern Computer Architectures.' In Proceedings of the IEEE Symposium on Computer Architecture, 1:102-113. https://doi.org/10.1109/SCA.2020.00010."
+      }
+    }
+  ]
+}

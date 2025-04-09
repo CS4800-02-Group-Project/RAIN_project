@@ -1,7 +1,9 @@
 from typing import Dict, List, Optional
+import yaml
+import os
 from crewai import Agent, Crew, Process, Task
-from crewai.project import CrewBase, agent, crew, task
 from pydantic import BaseModel, Field
+from langchain_openai import ChatOpenAI
 
 class ResearchEntry(BaseModel):
     """Represents a single research source with detailed metadata."""
@@ -18,52 +20,75 @@ class ResearchReport(BaseModel):
     topic: str = Field(description="The overall research topic or field being investigated.")
     entries: List[ResearchEntry] = Field(description="A list of research entries, each containing detailed metadata about a source.")
 
-@CrewBase
 class Backend():
     """Backend crew for research gathering and structured reporting"""
 
-    agents_config = 'config/agents.yaml'
-    tasks_config = 'config/tasks.yaml'
+    def __init__(self):
+        # Get the directory of the current file
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        config_dir = os.path.join(current_dir, 'config')
+        
+        # Load YAML configurations
+        with open(os.path.join(config_dir, 'agents.yaml'), 'r') as file:
+            self.agents_config = yaml.safe_load(file)
+        
+        with open(os.path.join(config_dir, 'tasks.yaml'), 'r') as file:
+            self.tasks_config = yaml.safe_load(file)
 
-    @agent
+        # Initialize OpenAI
+        self.llm = ChatOpenAI(
+            model="gpt-4-turbo-preview",
+            temperature=0.7
+        )
+
     def researcher(self) -> Agent:
+        config = self.agents_config['researcher']
         return Agent(
-            config=self.agents_config['researcher'],
+            role=config['role'].strip(),
+            goal=config['goal'].strip(),
+            backstory=config['backstory'].strip(),
+            llm=self.llm,
             verbose=True
         )
 
-    @agent
     def reporting_analyst(self) -> Agent:
+        config = self.agents_config['reporting_analyst']
         return Agent(
-            config=self.agents_config['reporting_analyst'],
+            role=config['role'].strip(),
+            goal=config['goal'].strip(),
+            backstory=config['backstory'].strip(),
+            llm=self.llm,
             verbose=True
         )
 
-
-    @task
     def research_task(self) -> Task:
+        config = self.tasks_config['research_task']
         return Task(
-            config=self.tasks_config['research_task'],
+            description=config['description'].strip(),
             agent=self.researcher(),
+            expected_output=config['expected_output'].strip(),
             output_json=ResearchEntry
         )
 
-    @task
     def reporting_task(self) -> Task:
+        config = self.tasks_config['reporting_task']
         return Task(
-            config=self.tasks_config['reporting_task'],
+            description=config['description'].strip(),
             agent=self.reporting_analyst(),
-            output_json=ResearchReport,  # Outputs the full structured research report
-            output_file="report.json"
+            expected_output=config['expected_output'].strip(),
+            output_json=ResearchReport,
+            output_file=config.get('output_file', 'report.json'),
+            context=[self.research_task()]
         )
 
-    @crew
     def crew(self) -> Crew:
         """Creates the Backend crew"""
-
+        research = self.research_task()
+        reporting = self.reporting_task()
+        
         return Crew(
-            agents=self.agents,  # Automatically created by the @agent decorator
-            tasks=self.tasks,  # Automatically created by the @task decorator
-            process=Process.sequential,  # Ensures the reporting happens after research
+            agents=[self.researcher(), self.reporting_analyst()],
+            tasks=[research, reporting],
+            process=Process.sequential,
             verbose=True,
         )
