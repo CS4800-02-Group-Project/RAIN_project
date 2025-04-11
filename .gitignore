@@ -29,6 +29,9 @@ yarn-error.log*
 __pycache__/
 *.py[cod]
 
+/backend/outlook/.venv/
+/backend/crew/venv/
+
 # Distribution / packaging
 bin/
 build/
