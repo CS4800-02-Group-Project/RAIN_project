@@ -62,7 +62,7 @@ const LoginModal = () => {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 90vh;
     background-color: #f6f6f6;
   `;
   

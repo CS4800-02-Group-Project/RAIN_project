@@ -1,11 +1,15 @@
 import React from "react";
 import styled from "styled-components";
-import LoginModal from "../components/LoginModal.js"
+import LoginModal from "../components/LoginModal.js";
+import Navbar from "../components/Navbar.js";
 
 const Login = () => {
     return (
         <Content>
-            <LoginModal />
+            <Navbar/>
+            <PageContainer>
+                <LoginModal />
+            </PageContainer>
         </Content>
     );
 };
@@ -13,10 +17,11 @@ const Login = () => {
 const Content = styled.div`
     background-color: #f6f6f6;
     min-height: 100vh;
+`;
+
+const PageContainer = styled.div`
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding-top: 20px;
 `;
 
 export default Login;

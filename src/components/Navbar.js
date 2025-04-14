@@ -10,12 +10,12 @@ export default function Navbar() {
         <ul>
           <li>
             <Page>
-                <Link to="/login">Sign-In</Link>
+                <Link to="/">Sign-In</Link>
             </Page>
           </li>
           <li>
             <Page>
-                <Link to="/">Dashboard</Link>
+                <Link to="/Dashboard">Dashboard</Link>
             </Page>
           </li>
         </ul>

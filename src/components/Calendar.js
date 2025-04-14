@@ -6,6 +6,13 @@ import { useCalendar } from "../context/CalendarContext";
 
 export default function InteractiveCalendar() {
     const { selectedDate, setSelectedDate, events, setEvents } = useCalendar();
+    /* Hardcoded Testing */
+    // const [selectedDate, setSelectedDate] = useState(new Date());
+    // const [events, setEvents] = useState({
+    //     "2025-03-05": "Project Deadline",
+    //     "2025-03-10": "Assignment Due",
+    //     "2025-03-15": "Exam Date",
+    // });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -78,14 +85,7 @@ export default function InteractiveCalendar() {
         }
         return null;
     };
-
-    // hardcoded example dates
-    // const [events, setEvents] = useState({
-    //     "2025-03-05": "Project Deadline",
-    //     "2025-03-10": "Assignment Due",
-    //     "2025-03-15": "Exam Date",
-    // });
-
+    
     return (
         <CalendarContainer>
             <StyledCalendar 
@@ -128,7 +128,7 @@ const CalendarContainer = styled.div`
     border: 2px solid #ccc;
     border-radius: 8px;
     background: #E0E4EE;
-    padding: 30px;
+    padding: 37px;
 `;
 
 const StyledCalendar = styled(Calendar)`
@@ -138,7 +138,10 @@ const StyledCalendar = styled(Calendar)`
     border-radius: 8px;
 
     .has-event {
-        background-color: #e6f7ff;
+        background-color:rgb(69, 201, 57); /* Highlight color for event days */
+        color: black; /* Text color for better contrast */
+        font-weight: bold; /* Make the text bold */
+        border-radius: 50%; /* Make the highlight circular */
     }
 
     .react-calendar__tile--now {
