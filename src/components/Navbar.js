@@ -1,8 +1,20 @@
-import React from "react";
+import React from 'react';
+import { auth } from '../firebase';
+import { signOut } from 'firebase/auth';
+import { useNavigate, Link } from 'react-router-dom';
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 
 export default function Navbar() {
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigate('/login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
   return (
     <Container>
       <Name>RAIN</Name>
@@ -10,12 +22,17 @@ export default function Navbar() {
         <ul>
           <li>
             <Page>
-                <Link to="/">Sign-In</Link>
+              <Link to="/login" onClick={handleSignOut}>Sign Out</Link>
             </Page>
           </li>
+          {/* <li>
+            <Page>
+              <Link to="/login">Sign-In</Link>
+            </Page>
+          </li> */}
           <li>
             <Page>
-                <Link to="/Dashboard">Dashboard</Link>
+              <Link to="/dashboard">Dashboard</Link>
             </Page>
           </li>
         </ul>

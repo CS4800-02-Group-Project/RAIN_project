@@ -1,71 +1,111 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { auth, db } from '../firebase';
+import { useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+
 
 const LoginModal = () => {
-    const [isSignUp, setIsSignUp] = useState(false);
-    const [formData, setFormData] = useState({
-      accountName: "",
-      email: "",
-      password: "",
-    });
+  const navigate = useNavigate();
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [uid, setUid] = useState('');
 
-    // Handle input changes
-    const handleChange = (e) => {
-      setFormData({...formData, [e.target.name]: e.target.value});
-    };
-
-    // Handle form submission
-    const handleSubmit = async(e) => {
-      e.preventDefault();
-
-      const endpoint = isSignUp ? "/api/signup" : "/api/signin";
-
-      const requestData = isSignUp ? { accountName: formData.accountName, email: formData.email, password: formData.password } : { email: formData.email, password: formData.password };
-
-      console.log("Data sent: ", requestData);
-
-      // backend waiting
-
-    };
-  
-    return (
-      <FormContainer>
-      <FormBox>
-        <h2>{isSignUp ? "Sign Up" : "Sign In"}</h2>
-
-        <Form onSubmit={handleSubmit}>
-          {isSignUp && (
-            <>
-              <Label>Account Name</Label>
-              <Input type="text" name="accountName" placeholder="Enter your account name" value={formData.accountName} onChange={handleChange} />
-            </>
-          )}
-
-          <Label>School Email</Label>
-          <Input type="email" name="email" placeholder="Enter your school email" value={formData.email} onChange={handleChange} />
-
-          <Label>Password</Label>
-          <Input type="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} />
-
-          <SubmitButton type="submit">{isSignUp ? "Sign Up" : "Sign In"}</SubmitButton>
-        </Form>
-
-        <ToggleText onClick={() => setIsSignUp(!isSignUp)}>
-          {isSignUp ? "Would You Like To Sign In?" : "Would You Like To Sign Up?"}
-        </ToggleText>
-      </FormBox>
-    </FormContainer>
-    );
+  // Handle input changes
+  const handleChange = (e) => {
+    if (e.target.name === "email"){
+      setEmail(e.target.value);
+    } else if (e.target.name === "password"){
+      setPassword(e.target.value);
+    }
+    
   };
-  
-  const FormContainer = styled.div`
-    display: flex;
-    justify-content: center;
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    console.log("handleSignUp called");
+
+    try {
+        console.log("Trying to create user with email:", email);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log("User created successfully:", user);
+
+        const userDoc = doc(db, 'users', user.uid);
+        console.log("User doc reference created:", userDoc);
+
+        const docSnap = await getDoc(userDoc);
+        console.log("Document snapshot:", docSnap);
+
+        if (!docSnap.exists()) {
+            console.log("Document does not exist, creating...");
+            await setDoc(userDoc, { email: user.email });
+            console.log("Document created with email:", user.email);
+        } else {
+            console.log("Document already exists.");
+        }
+
+        console.log('User signed up:', user);
+        navigate('/dashboard');
+    } catch (error) {
+        console.error("Error during sign-up:", error);
+        setError(error.message);
+    }
+  };
+
+  const handleSignIn = async (e) => {
+      e.preventDefault();
+      setError('');
+      try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+          console.log('User signed in:', user);
+          navigate('/dashboard');
+      } catch (error) {
+          setError(error.message);
+      }
+  };
+
+
+  return (
+    <FormContainer>
+    <FormBox>
+      <h2>{isSignUp ? "Sign Up" : "Sign In"}</h2>
+      {error && <div style={{ color: 'red' }}>{error}</div>}
+
+      <Form onSubmit={isSignUp?handleSignUp:handleSignIn}>
+
+        <Label>School Email</Label>
+        <Input type="email" name="email" placeholder="Enter your school email" value={email} onChange={handleChange} required/>
+
+        <Label>Password</Label>
+        <Input type="password" name="password" placeholder="Enter your password" value={password} onChange={handleChange} required/>
+
+        <SubmitButton type="submit">{isSignUp ? "Sign Up" : "Sign In"}</SubmitButton>
+      </Form>
+
+      <ToggleText onClick={() => setIsSignUp(!isSignUp)}>
+        {isSignUp ? "Would You Like To Sign In?" : "Would You Like To Sign Up?"}
+      </ToggleText>        
+    </FormBox>
+
+  </FormContainer>
+
+  );
+};
+
+const FormContainer = styled.div`
+  display: flex;
+  justify-content: center;
     align-items: center;
-    height: 90vh;
+    min-height: 100vh;
     background-color: #f6f6f6;
   `;
-  
+
   const FormBox = styled.div`
     background: white;
     padding: 40px;
@@ -74,52 +114,52 @@ const LoginModal = () => {
     width: 350px;
     text-align: center;
   `;
-  
-  const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-  `;
-  
-  const Label = styled.label`
-    text-align: left;
-    margin: 8px 0 4px;
-    font-size: 14px;
-    font-weight: bold;
-  `;
-  
-  const Input = styled.input`
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    outline: none;
-  `;
-  
-  const SubmitButton = styled.button`
-    padding: 12px;
-    font-size: 16px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
-  
-    &:hover {
-      background-color: #218838;
-    }
-  `;
-  
-  const ToggleText = styled.p`
-    margin-top: 15px;
-    font-size: 14px;
-    color: #007bff;
-    cursor: pointer;
-  
-    &:hover {
-      text-decoration: underline;
-    }
-  `;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Label = styled.label`
+  text-align: left;
+  margin: 8px 0 4px;
+  font-size: 14px;
+  font-weight: bold;
+`;
+
+const Input = styled.input`
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  outline: none;
+`;
+
+const SubmitButton = styled.button`
+  padding: 12px;
+  font-size: 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+
+  &:hover {
+    background-color: #218838;
+  }
+`;
+
+const ToggleText = styled.p`
+  margin-top: 15px;
+  font-size: 14px;
+  color: #007bff;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 export default LoginModal;

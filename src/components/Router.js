@@ -1,8 +1,8 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { CalendarProvider } from '../context/CalendarContext';
-import Dashboard from "../pages/Dashboard";
-import Login from "../pages/Login"
+import Dashboard from '../pages/Dashboard';
+import Login from '../pages/Login';
 
 const Layout = () => {
     return (
@@ -20,8 +20,9 @@ export default function AppRouter() {
             <CalendarProvider>
                 <Routes>
                     <Route element={<Layout />}>
-                        <Route path="/Dashboard" element={<Dashboard />} />
-                        <Route path="/" element={<Login/>} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/" element={<Navigate to="/dashboard" />} />
                     </Route>
                 </Routes>
             </CalendarProvider>
