@@ -7,73 +7,13 @@ export default function PromptMenu() {
     const [input, setInput] = useState("");        // store user input
     const [isLoading, setIsLoading] = useState(false); // loading state
     const { selectedDate, events } = useCalendar();
+    const [classification, setClassification] = useState("Academic Question");
+
 
     useEffect(() => {
         console.log(messages);
     }, [messages]);
 
-    /** 
-     * Create event based on selection from Calendar, sent request, capture request by CrewAI and create prompt message in chat box
-     * */
-
-    function parsePythonStyleJSON(jsonStr) {
-        // Extract topic
-        const topicMatch = jsonStr.match(/'topic':\s*'([^']+)'/);
-        const topic = topicMatch ? topicMatch[1] : "";
-
-        // Extract entries array using regex to identify individual entry objects
-        const entryRegex = /{[^{}]*(?:{[^{}]*}[^{}]*)*}/g;
-        const entryMatches = jsonStr.match(entryRegex) || [];
-
-        const entries = entryMatches.map(entryStr => {
-            // Extract title
-            const titleMatch = entryStr.match(/'title':\s*'([^']+)'/);
-            const title = titleMatch ? titleMatch[1] : "";
-
-            // Extract authors
-            const authorsMatch = entryStr.match(/'authors':\s*(\[[^\]]+\])/);
-            let authors = [];
-            if (authorsMatch) {
-                const authorsStr = authorsMatch[1].replace(/'/g, '"');
-                try {
-                    authors = JSON.parse(authorsStr);
-                } catch (e) {
-                    console.error("Error parsing authors:", e);
-                }
-            }
-
-            // Extract year
-            const yearMatch = entryStr.match(/'year':\s*(\d+)/);
-            const year = yearMatch ? parseInt(yearMatch[1]) : 0;
-
-            // Extract abstract
-            const abstractMatch = entryStr.match(/'abstract':\s*'([^']+)'/);
-            const abstract = abstractMatch ? abstractMatch[1] : "";
-
-            // Extract source
-            const sourceMatch = entryStr.match(/'source':\s*'([^']+)'/);
-            const source = sourceMatch ? sourceMatch[1] : "";
-
-            // Extract doi_url
-            const doiMatch = entryStr.match(/'doi_url':\s*'([^']+)'/);
-            const doi_url = doiMatch ? doiMatch[1] : "";
-
-            // We'll create a simplified citations object
-            const citations = {};
-
-            return {
-                title,
-                authors,
-                year,
-                abstract,
-                source,
-                doi_url,
-                citations
-            };
-        });
-
-        return { topic, entries };
-    }
 
 
     const handleSend = async () => {
@@ -84,49 +24,30 @@ export default function PromptMenu() {
         setIsLoading(true);
 
         try {
-            // Get the selected date's event if it exists
-            const selectedDateStr = selectedDate.toISOString().split('T')[0];
-            const selectedEvent = events[selectedDateStr] || "No event on this date";
-
-            // Combine the event and user input into a single prompt
-            const combinedPrompt = `Event: ${selectedEvent}\nUser Query: ${input}`;
-
-            console.log(combinedPrompt);
-            const response = await fetch("http://0.0.0.0:8000/api/research", {
+            const response = await fetch("http://127.0.0.1:8000/api/research", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ 
-                    prompt: combinedPrompt
+                body: JSON.stringify({
+                    classification: classification,
+                    query: input
                 })
             });
 
-            console.log(response);
             const data = await response.json();
-            console.log(data);
-
-            const parsedResponse = parsePythonStyleJSON(data.response);
-            console.log(parsedResponse);
-
-            // Format the AI response with chat and articles
-            const formattedResponse = `chat: ${input}\n\narticles:\n${parsedResponse.entries.map(entry =>
-                `- ${entry.title} (${entry.year})\n  Authors: ${entry.authors.join(', ')}\n  Abstract: ${entry.abstract}\n  Source: ${entry.source}\n  DOI: ${entry.doi_url || 'N/A'}`
-            ).join('\n\n')}`;
-
-            const aiResponse = { text: formattedResponse, sender: "AI" };
-            setMessages(prevMessages => [...prevMessages, aiResponse]);
+            const aiResponse = {  text: data.response.json_dict.response, sender: "AI" };
+            setMessages(prev => [...prev, aiResponse]);
         } catch (error) {
-            console.error("Response fetching failed...", error);
-            setMessages(prevMessages => [...prevMessages, {
+            console.error("Response fetching failed:", error);
+            setMessages(prev => [...prev, {
                 text: "Error: Failed to get response from server",
                 sender: "AI"
             }]);
         } finally {
             setIsLoading(false);
+            setInput("");
         }
-
-        setInput("");
     };
 
     return (
@@ -135,9 +56,7 @@ export default function PromptMenu() {
                 {messages.map((msg, index) => (
                     <Message key={index} sender={msg.sender}>
                         {msg.sender === "User" ? (
-                            <div>
-                                <strong>You:</strong> {msg.text}
-                            </div>
+                            <div><strong>You:</strong> {msg.text}</div>
                         ) : (
                             <div>
                                 <strong>AI:</strong>
@@ -157,12 +76,26 @@ export default function PromptMenu() {
                     </Message>
                 )}
             </ChatHistory>
+
+            <DropdownContainer>
+                <label htmlFor="classification">Select a type:</label>
+                <select
+                    id="classification"
+                    value={classification}
+                    onChange={(e) => setClassification(e.target.value)}
+                    disabled={isLoading}
+                >
+                    <option value="Research Topic">Research Topic</option>
+                    <option value="Academic Question">Academic Question</option>
+                </select>
+            </DropdownContainer>
+
             <InputContainer>
                 <ChatInput
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Type a message..."
+                    placeholder="Type your question or research topic..."
                     disabled={isLoading}
                 />
                 <SendButton onClick={handleSend} disabled={isLoading}>
@@ -178,7 +111,7 @@ const ChatContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: 400px;
-    height: 500px;
+    height: 550px;
     border: 2px solid #ccc;
     border-radius: 8px;
     background: #E0E4EE;
@@ -192,7 +125,6 @@ const ChatHistory = styled.div`
     border-bottom: 2px solid #ccc;
 `;
 
-// based on sender or ai, set the color for sender and positioning
 const Message = styled.div`
     background: ${(props) => (props.sender === "User" ? "#353755" : "#777")};
     color: white;
@@ -240,3 +172,89 @@ const LoadingText = styled.div`
     color: #666;
     font-style: italic;
 `;
+
+const DropdownContainer = styled.div`
+    margin: 10px 10px 0 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    select {
+        padding: 6px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+`;
+
+
+// Save for later use
+    /** 
+     * Create event based on selection from Calendar, sent request, capture request by CrewAI and create prompt message in chat box
+     * */
+
+    // function parsePythonStyleJSON(jsonStr) {
+    //     // Extract topic
+    //     const topicMatch = jsonStr.match(/'topic':\s*'([^']+)'/);
+    //     const topic = topicMatch ? topicMatch[1] : "";
+
+    //     // Extract entries array using regex to identify individual entry objects
+    //     const entryRegex = /{[^{}]*(?:{[^{}]*}[^{}]*)*}/g;
+    //     const entryMatches = jsonStr.match(entryRegex) || [];
+
+    //     const entries = entryMatches.map(entryStr => {
+    //         // Extract title
+    //         const titleMatch = entryStr.match(/'title':\s*'([^']+)'/);
+    //         const title = titleMatch ? titleMatch[1] : "";
+
+    //         // Extract authors
+    //         const authorsMatch = entryStr.match(/'authors':\s*(\[[^\]]+\])/);
+    //         let authors = [];
+    //         if (authorsMatch) {
+    //             const authorsStr = authorsMatch[1].replace(/'/g, '"');
+    //             try {
+    //                 authors = JSON.parse(authorsStr);
+    //             } catch (e) {
+    //                 console.error("Error parsing authors:", e);
+    //             }
+    //         }
+
+    //         // Extract year
+    //         const yearMatch = entryStr.match(/'year':\s*(\d+)/);
+    //         const year = yearMatch ? parseInt(yearMatch[1]) : 0;
+
+    //         // Extract abstract
+    //         const abstractMatch = entryStr.match(/'abstract':\s*'([^']+)'/);
+    //         const abstract = abstractMatch ? abstractMatch[1] : "";
+
+    //         // Extract source
+    //         const sourceMatch = entryStr.match(/'source':\s*'([^']+)'/);
+    //         const source = sourceMatch ? sourceMatch[1] : "";
+
+    //         // Extract doi_url
+    //         const doiMatch = entryStr.match(/'doi_url':\s*'([^']+)'/);
+    //         const doi_url = doiMatch ? doiMatch[1] : "";
+
+    //         // We'll create a simplified citations object
+    //         const citations = {};
+
+    //         return {
+    //             title,
+    //             authors,
+    //             year,
+    //             abstract,
+    //             source,
+    //             doi_url,
+    //             citations
+    //         };
+    //     });
+
+    //     return { topic, entries };
+    // }
+
+                // const parsedResponse = parsePythonStyleJSON(data.response);
+            // console.log(parsedResponse);
+
+            // // Format the AI response with chat and articles
+            // const formattedResponse = `chat: ${input}\n\narticles:\n${parsedResponse.entries.map(entry =>
+            //     `- ${entry.title} (${entry.year})\n  Authors: ${entry.authors.join(', ')}\n  Abstract: ${entry.abstract}\n  Source: ${entry.source}\n  DOI: ${entry.doi_url || 'N/A'}`
+            // ).join('\n\n')}`;

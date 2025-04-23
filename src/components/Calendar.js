@@ -5,14 +5,14 @@ import "react-calendar/dist/Calendar.css";
 import { useCalendar } from "../context/CalendarContext";
 
 export default function InteractiveCalendar() {
-    const { selectedDate, setSelectedDate, events, setEvents } = useCalendar();
+    // const { selectedDate, setSelectedDate, events, setEvents } = useCalendar();
     /* Hardcoded Testing */
-    // const [selectedDate, setSelectedDate] = useState(new Date());
-    // const [events, setEvents] = useState({
-    //     "2025-03-05": "Project Deadline",
-    //     "2025-03-10": "Assignment Due",
-    //     "2025-03-15": "Exam Date",
-    // });
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [events, setEvents] = useState({
+        "2025-03-05": "Project Deadline",
+        "2025-03-10": "Assignment Due",
+        "2025-03-15": "Exam Date",
+    });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 

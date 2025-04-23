@@ -1,46 +1,60 @@
-research_task:
+---
+classify_query:
   description: >
-    Conduct a thorough research on {topic}.
-    Gather a list of books, research articles, industry whitepapers, and credible expert reports related to {topic}.
-    Ensure all sources are legitimate, referenced, and suitable for academic or professional research.
-    If a field is not applicable, leave it blank. **Never fabricate sources.**  
-    Prioritize English-language sources, but older foundational works are acceptable.
-
+    Based on the input {query}, classify the query as either a 'research_topic' or an 'academic_question'.
   expected_output: >
-    A JSON array of at least 10+ referenced sources, where each entry follows the ResearchEntry model:
+    {
+      "classification": "research_topic" | "academic_question"
+    }
+  async_execution: false
+  agent: query_classifier
+  output_key: classification
+
+process_research_topic:
+  description: >
+    If the classification is 'research_topic', output a list of credible academic resources based on the {query}.
+  expected_output: >
     [
       {
-        'title': 'Example Paper on AI',
-        'authors': ['John Doe', 'Jane Smith'],
-        'year': 2023,
-        'abstract': 'This study explores advancements in AI-driven research.',
-        'source': 'IEEE Transactions on AI',
-        'doi_url': 'https://doi.org/10.1234/example',
-        'citations': {
-          'APA': 'Doe, J., & Smith, J. (2023). Example Paper on AI. IEEE Transactions on AI.',
-          'MLA': 'Doe, John, and Jane Smith. 'Example Paper on AI.' IEEE Transactions on AI, 2023.',
-          'IEEE': 'J. Doe and J. Smith, 'Example Paper on AI,' IEEE Transactions on AI, 2023.',
-          'Chicago': 'Doe, John, and Jane Smith. 2023. 'Example Paper on AI.' IEEE Transactions on AI.'
-        }
+        "title": "Paper Title",
+        "authors": ["Author One", "Author Two"],
+        "year": 2023,
+        "abstract": "A concise summary of the research...",
+        "source": "Journal or Conference",
+        "citations": "MLA citaion format",
       },
       ...
     ]
+  async_execution: false
+  agent: senior_data_researcher
+  context:
+    - classify_query
+  output_key: process_research_topic
 
-  agent: researcher
-
-reporting_task:
+process_academic_question:
   description: >
-    Review the gathered research and structure it into a well-formatted JSON report.
-    The report should follow the ResearchReport model, containing the topic and a list of referenced sources.
-
+    If the classification is 'academic_question', output the answer to the question based on the {query} with academic reasoning.
   expected_output: >
-    A structured JSON object following the ResearchReport model, containing the topic and at least 10+ referenced sources.
-    The final JSON should be formatted and validated as:
-    {
-      'topic': '{topic}',
-      'entries': [ResearchEntry, ResearchEntry, ...]
-    }
+    "A detailed explanation with relevant academic reasoning, including equations, examples, and references where applicable."
+  async_execution: false
+  agent: academic_helper
+  context:
+    - classify_query
+  output_key: process_academic_question
 
+report_results:
+  description: >
+    Aggregate and format the final response into a JSON chat-friendly message, using newline breaks and clear structure.
+    The output should be a JSON object with the following keys:
+    - research_output: The process_research_topic output from the senior_data_researcher if the classification is 'research_topic'.
+    - academic_output: The process_academic_question output from the academic_helper if the classification is 'academic_question'.
+  expected_output: >
+    {
+      "response": "[Formatted academic answer or bullet points from research entries]\n"
+    }
+  async_execution: false
   agent: reporting_analyst
-  context: [research_task]
-  output_file: report.json
+  context:
+    - classify_query
+    - process_research_topic
+    - process_academic_question

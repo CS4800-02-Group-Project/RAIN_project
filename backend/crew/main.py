@@ -27,18 +27,19 @@ logger = logging.getLogger(__name__)
 # Suppress specific warnings
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
-def research(InputTopic):
+def response(classification, query):
     """
     Run the crew.
     """
     inputs = {
-        'topic': InputTopic
+        'classification': classification,
+        'query': query
     }
     
     try:
         return Backend().crew().kickoff(inputs=inputs)
     except Exception as e:
-        logger.error(f"Error in research: {str(e)}")
+        logger.error(f"Error in run: {str(e)}")
         raise Exception(f"An error occurred while running the crew: {e}")
 
 app = FastAPI()
@@ -53,23 +54,30 @@ app.add_middleware(
 )
 
 class ResearchRequest(BaseModel):
-    prompt: str
+    classification: str
+    query: str
 
 @app.post("/api/research")
 async def ai_response(request: ResearchRequest):
-    logger.info(f"Received research request for topic: {request.prompt}")
-    result = research(request.prompt)
-    return {"response": f"{result}"}
+    result = response(request.classification, request.query)
+    print(result)
+    return {"response": result}
 
 
 
+import uvicorn
 if __name__ == "__main__":
-    import uvicorn
     logger.info("Starting server...")
     uvicorn.run(
         "main:app",
-        host="0.0.0.0",
+        host="127.0.0.1",
         port=8000,
         reload=False,  # Disable reloader to avoid watching package files
         log_level="info"
     )
+    
+    
+    # result = response("Academic Question", "What is the derivative of (square root of 32) times x?")
+    # print(result)
+    # result = response("Research Topic", "Game Theory")
+    # print(result)

@@ -1,94 +1,79 @@
-from typing import Dict, List, Optional
-import yaml
-import os
 from crewai import Agent, Crew, Process, Task
-from pydantic import BaseModel, Field
-from langchain_openai import ChatOpenAI
+from crewai.project import CrewBase, agent, crew, task
+from pydantic import BaseModel
 
-class ResearchEntry(BaseModel):
-    """Represents a single research source with detailed metadata."""
-    title: str = Field(description="Title of the research paper, book, or article.")
-    authors: List[str] = Field(description="List of authors who contributed to the publication.")
-    year: int = Field(description="Year of publication.")
-    abstract: str = Field(description="A brief 2-3 sentence summary of the research paper.")
-    source: str = Field(description="The journal, conference, or institution where the research was published.")
-    doi_url: Optional[str] = Field(default=None, description="DOI link or official URL to the research paper (if available).")
-    citations: Dict[str, str] = Field(default_factory=dict, description="Formatted citations in APA, MLA, IEEE, and Chicago styles.")
+class ChatResponse(BaseModel):
+    response: str
 
-class ResearchReport(BaseModel):
-    """Structured research report containing multiple research entries."""
-    topic: str = Field(description="The overall research topic or field being investigated.")
-    entries: List[ResearchEntry] = Field(description="A list of research entries, each containing detailed metadata about a source.")
-
+@CrewBase
 class Backend():
-    """Backend crew for research gathering and structured reporting"""
+    """CrewAutomationForAcademicResearchAndAnswers crew"""
 
-    def __init__(self):
-        # Get the directory of the current file
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        config_dir = os.path.join(current_dir, 'config')
-        
-        # Load YAML configurations
-        with open(os.path.join(config_dir, 'agents.yaml'), 'r') as file:
-            self.agents_config = yaml.safe_load(file)
-        
-        with open(os.path.join(config_dir, 'tasks.yaml'), 'r') as file:
-            self.tasks_config = yaml.safe_load(file)
-
-        # Initialize OpenAI
-        self.llm = ChatOpenAI(
-            model="gpt-4-turbo-preview",
-            temperature=0.7
-        )
-
-    def researcher(self) -> Agent:
-        config = self.agents_config['researcher']
+    @agent
+    def query_classifier(self) -> Agent:
         return Agent(
-            role=config['role'].strip(),
-            goal=config['goal'].strip(),
-            backstory=config['backstory'].strip(),
-            llm=self.llm,
-            verbose=True
+            config=self.agents_config['query_classifier'],
+            tools=[],
         )
 
+    @agent
+    def senior_data_researcher(self) -> Agent:
+        return Agent(
+            config=self.agents_config['senior_data_researcher'],
+            tools=[],
+        )
+
+    @agent
+    def academic_helper(self) -> Agent:
+        return Agent(
+            config=self.agents_config['academic_helper'],
+            tools=[],
+        )
+
+    @agent
     def reporting_analyst(self) -> Agent:
-        config = self.agents_config['reporting_analyst']
         return Agent(
-            role=config['role'].strip(),
-            goal=config['goal'].strip(),
-            backstory=config['backstory'].strip(),
-            llm=self.llm,
-            verbose=True
+            config=self.agents_config['reporting_analyst'],
+            tools=[],
         )
 
-    def research_task(self) -> Task:
-        config = self.tasks_config['research_task']
+
+    @task
+    def classify_query(self) -> Task:
         return Task(
-            description=config['description'].strip(),
-            agent=self.researcher(),
-            expected_output=config['expected_output'].strip(),
-            output_json=ResearchEntry
+            config=self.tasks_config['classify_query'],
+            tools=[],
         )
 
-    def reporting_task(self) -> Task:
-        config = self.tasks_config['reporting_task']
+    @task
+    def process_research_topic(self) -> Task:
         return Task(
-            description=config['description'].strip(),
-            agent=self.reporting_analyst(),
-            expected_output=config['expected_output'].strip(),
-            output_json=ResearchReport,
-            output_file=config.get('output_file', 'report.json'),
-            context=[self.research_task()]
+            config=self.tasks_config['process_research_topic'],
+            tools=[],
         )
 
+    @task
+    def process_academic_question(self) -> Task:
+        return Task(
+            config=self.tasks_config['process_academic_question'],
+            tools=[],
+        )
+
+    @task
+    def report_results(self) -> Task:
+        return Task(
+            config=self.tasks_config['report_results'],
+            tools=[],
+            output_json=ChatResponse
+        )
+
+
+    @crew
     def crew(self) -> Crew:
-        """Creates the Backend crew"""
-        research = self.research_task()
-        reporting = self.reporting_task()
-        
+        """Creates the CrewAutomationForAcademicResearchAndAnswers crew"""
         return Crew(
-            agents=[self.researcher(), self.reporting_analyst()],
-            tasks=[research, reporting],
+            agents=self.agents, # Automatically created by the @agent decorator
+            tasks=self.tasks, # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=True,
         )
