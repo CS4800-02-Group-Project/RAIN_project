@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useCalendar } from "../context/CalendarContext";
+import { MarkdownRender } from "./MarkdownRender";
 
 export default function PromptMenu() {
     const [messages, setMessages] = useState([]);  // store chat history
@@ -60,9 +61,8 @@ export default function PromptMenu() {
                         ) : (
                             <div>
                                 <strong>AI:</strong>
-                                <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                                    {msg.text}
-                                </pre>
+                                {/* <MarkdownRender content={msg.text} /> */}
+                                <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}> {msg.text} </pre>
                             </div>
                         )}
                     </Message>
