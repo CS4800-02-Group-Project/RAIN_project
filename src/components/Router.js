@@ -22,7 +22,7 @@ export default function AppRouter() {
                     <Route element={<Layout />}>
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/login" element={<Login />} />
-                        <Route path="/" element={<Navigate to="/dashboard" />} />
+                        <Route path="/" element={<Navigate to="/login" />} />
                     </Route>
                 </Routes>
             </CalendarProvider>
