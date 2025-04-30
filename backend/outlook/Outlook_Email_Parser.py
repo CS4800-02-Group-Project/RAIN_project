@@ -14,7 +14,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate("valdez-chatroom-firebase-adminsdk-qoubm-92c80ba31f.json") 
+cred = credentials.Certificate("valdez-chatroom-b8d7e6358fb8.json") 
 firebase_admin.initialize_app(cred)
 
 db = firestore.client() 

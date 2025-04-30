@@ -46,3 +46,6 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+
+backend/outlook/valdez-chatroom-b8d7e6358fb8.json
+backend/crew/.venv
