@@ -5,9 +5,10 @@ const CalendarContext = createContext();
 export const CalendarProvider = ({ children }) => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [events, setEvents] = useState({});
+    const [selectedEvent, setSelectedEvent] = useState(null);
 
     return (
-        <CalendarContext.Provider value={{ selectedDate, setSelectedDate, events, setEvents }}>
+        <CalendarContext.Provider value={{ selectedDate, setSelectedDate, events, setEvents, selectedEvent, setSelectedEvent }}>
             {children}
         </CalendarContext.Provider>
     );

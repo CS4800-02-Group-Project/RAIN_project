@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useCalendar } from "../context/CalendarContext";
 import { db, auth } from "../firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";import styled from "styled-components";
 import Calendar from "react-calendar";
@@ -10,6 +11,7 @@ export default function InteractiveCalendar() {
     const [isLoading, setIsLoading] = useState(true); 
     const [error, setError] = useState(null);
     const [currentUser, setCurrentUser] = useState(null); 
+    const { setSelectedEvent } = useCalendar();
 
     const formatDate = (dateStr) => {
         // Convert "Apr 23 at 11:59pm" to "2024-04-23"
@@ -41,6 +43,13 @@ export default function InteractiveCalendar() {
             firebaseUser
         };
     };
+
+
+    useEffect(() => {
+        const dateKey = selectedDate.toISOString().split("T")[0];
+        const title = events[dateKey] || null;
+        setSelectedEvent(title);
+    }, [selectedDate, events]);
 
     useEffect(() => {
         console.log("Calendar component mounted or user changed");

@@ -3,19 +3,34 @@ import styled from "styled-components";
 import { useCalendar } from "../context/CalendarContext";
 import MarkdownRender from "./MarkdownRender";
 
+
 export default function PromptMenu() {
     const [messages, setMessages] = useState([]);  // store chat history
     const [input, setInput] = useState("");        // store user input
     const [isLoading, setIsLoading] = useState(false); // loading state
     const { selectedDate, events } = useCalendar();
     const [classification, setClassification] = useState("Academic Question");
-
+    const { selectedEvent } = useCalendar();
 
     useEffect(() => {
         console.log(messages);
     }, [messages]);
 
+    const suggestedPlaceholder = selectedEvent
+    ? classification === "Academic Question"
+        ? `What is ${selectedEvent}?`
+        : `${selectedEvent}`
+    : "Type your question or research topic...";
 
+    const handleKeyDown = (e) => {
+        if (e.key === "Tab") {
+            e.preventDefault();
+            const suggestion = classification === "Academic Question"
+                ? `What is ${selectedEvent}?`
+                : selectedEvent;
+            setInput(suggestion);
+        }
+    };
 
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
@@ -98,7 +113,8 @@ export default function PromptMenu() {
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Type your question or research topic..."
+                    onKeyDown={handleKeyDown}
+                    placeholder={suggestedPlaceholder}
                     disabled={isLoading}
                 />
                 <SendButton onClick={handleSend} disabled={isLoading}>
