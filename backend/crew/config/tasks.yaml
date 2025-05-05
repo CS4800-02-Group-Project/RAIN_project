@@ -1,7 +1,7 @@
 ---
 classify_query:
   description: >
-    Based on the input {query}, classify the query as either a 'research_topic' or an 'academic_question'.
+    Based on the input {classification}, classify the query as either a 'research_topic' or an 'academic_question'.
   expected_output: >
     {
       "classification": "research_topic" | "academic_question"
@@ -12,19 +12,17 @@ classify_query:
 
 process_research_topic:
   description: >
-    If the classification is 'research_topic', output a list of credible academic resources based on the {query}.
+    Extract and format GoogleScholarScrapingTool to find relevant papers for {query}. if the classification is 'research_topic'.
+    If any field is missing in a result, use "N/A" for that field. Do not generate or hallucinate content.
+    Return a structured, readable Markdown response suitable for chat, listing up to 5 relevant results.
   expected_output: >
-    [
-      {
-        "title": "Paper Title",
-        "authors": ["Author One", "Author Two"],
-        "year": 2023,
-        "abstract": "A concise summary of the research...",
-        "source": "Journal or Conference",
-        "citations": "MLA citaion format",
-      },
-      ...
-    ]
+    Extract and format GoogleScholarScrapingTool to find relevant papers for {query}. if the classification is 'research_topic'.
+    A Markdown-formatted list of up to 10 papers, each showing:
+    - Title
+    - Author(s)
+    - Year
+    - Link
+    - Abstract/Summary
   async_execution: false
   agent: senior_data_researcher
   context:
@@ -35,7 +33,7 @@ process_academic_question:
   description: >
     If the classification is 'academic_question', output the answer to the question based on the {query} with academic reasoning.
   expected_output: >
-    "A detailed explanation with relevant academic reasoning, including equations, examples, and references where applicable."
+    "A detailed explanation with relevant academic reasoning, including equations(Use $...$ for inline math), examples, and references where applicable."
   async_execution: false
   agent: academic_helper
   context:
@@ -45,12 +43,13 @@ process_academic_question:
 report_results:
   description: >
     Aggregate and format the final response into a JSON chat-friendly message, using newline breaks and clear structure.
-    The output should be a JSON object with the following keys:
+    Use the classify_query result to decide whether to return research_output or academic_output:
     - research_output: The process_research_topic output from the senior_data_researcher if the classification is 'research_topic'.
     - academic_output: The process_academic_question output from the academic_helper if the classification is 'academic_question'.
+    Only return one of the two outputs based on the classification.
   expected_output: >
     {
-      "response": "[Formatted academic answer or bullet points from research entries]\n"
+      "response": "[research_output or academic_output]"
     }
   async_execution: false
   agent: reporting_analyst

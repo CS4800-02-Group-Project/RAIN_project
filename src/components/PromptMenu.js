@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useCalendar } from "../context/CalendarContext";
-import { MarkdownRender } from "./MarkdownRender";
+import MarkdownRender from "./MarkdownRender";
 
 export default function PromptMenu() {
     const [messages, setMessages] = useState([]);  // store chat history
@@ -57,12 +57,15 @@ export default function PromptMenu() {
                 {messages.map((msg, index) => (
                     <Message key={index} sender={msg.sender}>
                         {msg.sender === "User" ? (
-                            <div><strong>You:</strong> {msg.text}</div>
+                            <div>
+                                {/* <MarkdownRender content={msg.text} /> */}
+                                <strong>You:</strong> {msg.text}
+                            </div>
                         ) : (
                             <div>
                                 <strong>AI:</strong>
-                                {/* <MarkdownRender content={msg.text} /> */}
-                                <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}> {msg.text} </pre>
+                                <MarkdownRender content={msg.text} />
+                                {/* <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}> {msg.text} </pre> */}
                             </div>
                         )}
                     </Message>
@@ -110,7 +113,7 @@ export default function PromptMenu() {
 const ChatContainer = styled.div`
     display: flex;
     flex-direction: column;
-    width: 400px;
+    width: 500px;
     height: 550px;
     border: 2px solid #ccc;
     border-radius: 8px;
@@ -132,7 +135,7 @@ const Message = styled.div`
     border-radius: 8px;
     margin: 5px 0;
     align-self: ${(props) => (props.sender === "User" ? "flex-end" : "flex-start")};
-    max-width: 80%;
+    max-width: 90%;
 `;
 
 const InputContainer = styled.div`
