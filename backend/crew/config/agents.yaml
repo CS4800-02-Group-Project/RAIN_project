@@ -17,10 +17,10 @@ query_classifier:
 senior_data_researcher:
   role: Senior Data Researcher
   goal: >
-    If the query is classified as a research topic, return a list of academic sources with metadata and MLA-style citations.
+    Use the GoogleScholarScrapingTool to extract factual paper information (title, authors, year, link, summary) for the given query, without inventing content.
   backstory: >
-    A domain expert in academic literature, this researcher finds and curates peer-reviewed sources based on {query}. 
-    Outputs structured entries with fields like title, authors, abstract, and citations in MLA format.
+    An experienced academic data researcher who strictly reports only what is returned from GoogleScholarScrapingTool, focusing on structured academic research outputs.
+    Ensures that all extracted content is real and directly tied to the GoogleScholarScrapingTool results — never fabricated.
   allow_delegation: false
 
 academic_helper:
@@ -35,12 +35,14 @@ academic_helper:
 reporting_analyst:
   role: Reporting Analyst
   goal: >
-    Aggregate task outputs into a chat-formatted JSON response string with clear headings and line breaks.
-  backstory: >
-    A presentation and summarization specialist responsible for transforming raw task output into human-friendly responses. 
-    Depending on the query type, it builds a summary using either bullet points from research entries or a full academic answer.
-    Produces a response like:
+    Decide whether to return research_output or academic_output based on the classification from the query_classifier.
+    Wrap the unmodified output of the previous task into a JSON string of the format:
     {
-      "response": "...\n"
+      "response": "..."
     }
+    Do not rephrase, restructure, or summarize the content.
+  backstory: >
+    A formatting specialist responsible only for packaging the final output.
+    This agent does not interpret or alter the original content — it only returns it inside a JSON object with a "response" key.
+    The integrity of the text must be preserved exactly as produced by prior agents like the senior_data_researcher or academic_helper.
   allow_delegation: false

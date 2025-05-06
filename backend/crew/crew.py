@@ -1,9 +1,28 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from pydantic import BaseModel
-
+from crewai.tools import BaseTool
+from datetime import datetime, timedelta
+from serpapi import GoogleSearch
 class ChatResponse(BaseModel):
     response: str
+
+# Define a WebScrapingTool class
+class GoogleScholarScrapingTool(BaseTool):
+    name: str = "GoogleScholarScrapingTool"
+    description: str = "A tool using SerpiAPI to scrape Google Scholar for research papers and articles."
+    def _run(self, query: str) -> list:
+        params = {
+        "engine": "google_scholar",
+        "q": query,
+        "api_key": "3e667b2154bfb7818917f8c17e9abc107006d9626a1478d8289a95e3ec23460c"
+        }
+        search = GoogleSearch(params)
+        results = search.get_dict()
+        organic_results = results["organic_results"]
+        return organic_results
+
+
 
 @CrewBase
 class Backend():
@@ -20,7 +39,7 @@ class Backend():
     def senior_data_researcher(self) -> Agent:
         return Agent(
             config=self.agents_config['senior_data_researcher'],
-            tools=[],
+            tools=[GoogleScholarScrapingTool()],
         )
 
     @agent
@@ -49,7 +68,7 @@ class Backend():
     def process_research_topic(self) -> Task:
         return Task(
             config=self.tasks_config['process_research_topic'],
-            tools=[],
+            tools=[GoogleScholarScrapingTool()],
         )
 
     @task

@@ -64,7 +64,6 @@ async def ai_response(request: ResearchRequest):
     return {"response": result}
 
 
-
 import uvicorn
 if __name__ == "__main__":
     logger.info("Starting server...")
@@ -76,8 +75,6 @@ if __name__ == "__main__":
         log_level="info"
     )
     
-    
-    # result = response("Academic Question", "What is the derivative of (square root of 32) times x?")
-    # print(result)
-    # result = response("Research Topic", "Game Theory")
-    # print(result)
+# import json
+# result = response("Research Topic", "Game Theory")
+# print(result)
