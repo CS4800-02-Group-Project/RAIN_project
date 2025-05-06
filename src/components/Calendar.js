@@ -59,7 +59,6 @@ export default function InteractiveCalendar() {
         }
     }, [currentUser]); // Add currentUser as dependency
 
-// Modify fetchAssignmentsFromFirestore to be more robust
 const fetchAssignmentsFromFirestore = async () => {
     try {
         setIsLoading(true);
@@ -81,22 +80,22 @@ const fetchAssignmentsFromFirestore = async () => {
         const usersRef = collection(db, 'users');
         const q = query(usersRef, where("email", "==", userEmail));
         const querySnapshot = await getDocs(q);
-        console.log("Query snapshot size:", querySnapshot.size); // Debug log
+        console.log("Query snapshot size:", querySnapshot.size); 
 
         if (!querySnapshot.empty) {
             const userDoc = querySnapshot.docs[0];
             const assignmentsRef = collection(userDoc.ref, 'assignments');
             const assignmentsSnapshot = await getDocs(assignmentsRef);
-            console.log("Found assignments:", assignmentsSnapshot.size); // Debug log
+            console.log("Found assignments:", assignmentsSnapshot.size); 
 
             const newEvents = {};
             assignmentsSnapshot.forEach(doc => {
                 const assignment = doc.data();
-                console.log("Processing assignment:", assignment); // Debug log
+                console.log("Processing assignment:", assignment); 
                 
                 if (assignment.due_date) {
                     const formattedDate = formatDate(assignment.due_date);
-                    console.log(`Formatting date ${assignment.due_date} to ${formattedDate}`); // Debug log
+                    console.log(`Formatting date ${assignment.due_date} to ${formattedDate}`); 
                     
                     if (formattedDate) {
                         newEvents[formattedDate] = assignment.title;
@@ -104,10 +103,10 @@ const fetchAssignmentsFromFirestore = async () => {
                 }
             });
 
-            console.log("Setting events:", newEvents); // Debug log
+            console.log("Setting events:", newEvents); 
             setEvents(newEvents);
         } else {
-            console.log("No user document found for email:", userEmail); // Debug log
+            console.log("No user document found for email:", userEmail); 
         }
     } catch (error) {
         console.error('Error fetching assignments:', error);
@@ -134,7 +133,6 @@ const handleOutlookLogin = () => {
                 clearInterval(pollInterval);
                 setIsLoading(false);
                 
-                // Modified section
                 if (data.user_email) {
                     console.log("Storing user email:", data.user_email);
                     sessionStorage.setItem('userEmail', data.user_email);
@@ -249,10 +247,10 @@ const StyledCalendar = styled(Calendar)`
     border-radius: 8px;
 
     .has-event {
-        background-color:rgb(69, 201, 57); /* Highlight color for event days */
-        color: black; /* Text color for better contrast */
-        font-weight: bold; /* Make the text bold */
-        border-radius: 50%; /* Make the highlight circular */
+        background-color:rgb(69, 201, 57); 
+        color: black; 
+        font-weight: bold; 
+        border-radius: 50%; 
     }
 
     .react-calendar__tile--now {

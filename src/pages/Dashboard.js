@@ -40,7 +40,6 @@ const PageContainer = styled.div`
   margin: 0 auto; 
   padding-top: 100px;
 
-  /* Responsive design: Switch to column layout on smaller screens */
   @media (max-width: 1150px) {
     flex-direction: column; 
     align-items: center; /
@@ -51,7 +50,7 @@ const Section = styled.div`
   display: flex; 
   justify-content: center; 
   align-items: center; 
-  flex: 1; /* Allow sections to take equal space */
+  flex: 1; 
   min-width: 400px; 
   min-height: 500px;
   height: 550px;
@@ -62,7 +61,6 @@ const Section = styled.div`
   background-color:rgb(82, 84, 119);
 
 
-  /* Adjust width for smaller screens */
   @media (max-width: 750px) {
     width: 100%; 
     max-width: 500px; 
