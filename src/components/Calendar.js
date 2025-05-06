@@ -296,6 +296,7 @@ const EventDot = styled.div`
     bottom: 2px;
     left: 50%;
     transform: translateX(-50%);
+    display: none;
 `;
 
 const EventDetails = styled.div`

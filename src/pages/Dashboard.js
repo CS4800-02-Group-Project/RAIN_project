@@ -41,7 +41,7 @@ const PageContainer = styled.div`
   padding-top: 100px;
 
   /* Responsive design: Switch to column layout on smaller screens */
-  @media (max-width: 750px) {
+  @media (max-width: 1150px) {
     flex-direction: column; 
     align-items: center; /
   }
