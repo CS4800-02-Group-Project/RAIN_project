@@ -43,78 +43,80 @@ export default function InteractiveCalendar() {
     };
 
     useEffect(() => {
-        console.log("Calendar component mounted or user changed");
         const authInfo = checkAuthenticationSources();
-        
         const userEmail = authInfo.sessionEmail || authInfo.localEmail || 
-                         (authInfo.firebaseUser && authInfo.firebaseUser.email);
+                          (authInfo.firebaseUser && authInfo.firebaseUser.email);
         
-        if (userEmail) {
+        if (userEmail && !currentUser) {
             console.log("Found user email:", userEmail);
             setCurrentUser(userEmail);
-            fetchAssignmentsFromFirestore();
         } else {
-            console.log("No user email found in any storage");
             setIsLoading(false);
         }
-    }, [currentUser]); // Add currentUser as dependency
-
-const fetchAssignmentsFromFirestore = async () => {
-    try {
-        setIsLoading(true);
-        const authInfo = checkAuthenticationSources();
-        console.log("Auth info when fetching:", authInfo);
-
-        const userEmail = authInfo.sessionEmail || authInfo.localEmail || 
-                         (authInfo.firebaseUser && authInfo.firebaseUser.email);
-
-        if (!userEmail) {
-            console.error("No user email found in any storage");
-            setError("User not authenticated");
-            return;
+    }, []); 
+    
+    useEffect(() => {
+        if (currentUser) {
+            fetchAssignmentsFromFirestore();
         }
+    }, [currentUser]); 
 
-        console.log("Fetching assignments for:", userEmail);
-        
+    const fetchAssignmentsFromFirestore = async () => {
+        try {
+            setIsLoading(true);
+            const authInfo = checkAuthenticationSources();
+            console.log("Auth info when fetching:", authInfo);
 
-        const usersRef = collection(db, 'users');
-        const q = query(usersRef, where("email", "==", userEmail));
-        const querySnapshot = await getDocs(q);
-        console.log("Query snapshot size:", querySnapshot.size); 
+            const userEmail = authInfo.sessionEmail || authInfo.localEmail || 
+                            (authInfo.firebaseUser && authInfo.firebaseUser.email);
 
-        if (!querySnapshot.empty) {
-            const userDoc = querySnapshot.docs[0];
-            const assignmentsRef = collection(userDoc.ref, 'assignments');
-            const assignmentsSnapshot = await getDocs(assignmentsRef);
-            console.log("Found assignments:", assignmentsSnapshot.size); 
+            if (!userEmail) {
+                console.error("No user email found in any storage");
+                setError("User not authenticated");
+                return;
+            }
 
-            const newEvents = {};
-            assignmentsSnapshot.forEach(doc => {
-                const assignment = doc.data();
-                console.log("Processing assignment:", assignment); 
-                
-                if (assignment.due_date) {
-                    const formattedDate = formatDate(assignment.due_date);
-                    console.log(`Formatting date ${assignment.due_date} to ${formattedDate}`); 
+            console.log("Fetching assignments for:", userEmail);
+            
+
+            const usersRef = collection(db, 'users');
+            const q = query(usersRef, where("email", "==", userEmail));
+            const querySnapshot = await getDocs(q);
+            console.log("Query snapshot size:", querySnapshot.size); 
+
+            if (!querySnapshot.empty) {
+                const userDoc = querySnapshot.docs[0];
+                const assignmentsRef = collection(userDoc.ref, 'assignments');
+                const assignmentsSnapshot = await getDocs(assignmentsRef);
+                console.log("Found assignments:", assignmentsSnapshot.size); 
+
+                const newEvents = {};
+                assignmentsSnapshot.forEach(doc => {
+                    const assignment = doc.data();
+                    console.log("Processing assignment:", assignment); 
                     
-                    if (formattedDate) {
-                        newEvents[formattedDate] = assignment.title;
+                    if (assignment.due_date) {
+                        const formattedDate = formatDate(assignment.due_date);
+                        console.log(`Formatting date ${assignment.due_date} to ${formattedDate}`); 
+                        
+                        if (formattedDate) {
+                            newEvents[formattedDate] = assignment.title;
+                        }
                     }
-                }
-            });
+                });
 
-            console.log("Setting events:", newEvents); 
-            setEvents(newEvents);
-        } else {
-            console.log("No user document found for email:", userEmail); 
+                console.log("Setting events:", newEvents); 
+                setEvents(newEvents);
+            } else {
+                console.log("No user document found for email:", userEmail); 
+            }
+        } catch (error) {
+            console.error('Error fetching assignments:', error);
+            setError(error.message);
+        } finally {
+            setIsLoading(false);
         }
-    } catch (error) {
-        console.error('Error fetching assignments:', error);
-        setError(error.message);
-    } finally {
-        setIsLoading(false);
-    }
-};
+    };
 const handleOutlookLogin = () => {
     window.open('http://localhost:4999/login', '_blank');
     setIsLoading(true);
@@ -139,12 +141,6 @@ const handleOutlookLogin = () => {
                     setCurrentUser(data.user_email);
                 }
 
-                // // Then fetch assignments from Firestore
-                // if (data.status === "success") {
-                //     await fetchAssignmentsFromFirestore();
-                // }
-
-                // Finally process any new assignments from Outlook
                 if (data.assignments && data.assignments.length > 0) {
                     const newEvents = {};
                     data.assignments.forEach(assignment => {

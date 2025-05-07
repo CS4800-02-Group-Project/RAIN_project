@@ -10,6 +10,8 @@ export default function Navbar() {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
+      sessionStorage.removeItem('userEmail');
+      localStorage.removeItem('userEmail');
       navigate('/login');
     } catch (error) {
       console.error('Error signing out:', error);
