@@ -110,49 +110,116 @@ export default function PromptMenu() {
 }
 
 
+// const ChatContainer = styled.div`
+//     display: flex;
+//     flex-direction: column;
+//     width: 500px;
+//     height: 550px;
+//     border: 2px solid #ccc;
+//     border-radius: 8px;
+//     background: #E0E4EE;
+//     padding: 10px;
+// `;
+
+// const ChatHistory = styled.div`
+//     flex: 1;
+//     overflow-y: auto;
+//     padding: 10px;
+//     border-bottom: 2px solid #ccc;
+// `;
+
+// const Message = styled.div`
+//     background: ${(props) => (props.sender === "User" ? "#353755" : "#777")};
+//     color: white;
+//     padding: 8px;
+//     border-radius: 8px;
+//     margin: 5px 0;
+//     align-self: ${(props) => (props.sender === "User" ? "flex-end" : "flex-start")};
+//     max-width: 90%;
+// `;
+
+// const InputContainer = styled.div`
+//     display: flex;
+//     padding: 10px;
+//     gap: 10px;
+// `;
+
+// const ChatInput = styled.input`
+//     flex: 1;
+//     padding: 8px;
+//     border: 2px solid #ccc;
+//     border-radius: 4px;
+//     &:disabled {
+//         background-color: #f0f0f0;
+//         cursor: not-allowed;
+//     }
+// `;
+
+// const SendButton = styled.button`
+//     background: #353755;
+//     color: white;
+//     border: none;
+//     padding: 8px 12px;
+//     border-radius: 4px;
+//     cursor: pointer;
+//     &:hover {
+//         background: #555;
+//     }
+//     &:disabled {
+//         background: #999;
+//         cursor: not-allowed;
+//     }
+// `;
+
 const ChatContainer = styled.div`
     display: flex;
     flex-direction: column;
-    width: 500px;
-    height: 550px;
+    width: 100%;
+    height: 100%;
     border: 2px solid #ccc;
     border-radius: 8px;
     background: #E0E4EE;
-    padding: 10px;
 `;
 
 const ChatHistory = styled.div`
     flex: 1;
     overflow-y: auto;
-    padding: 10px;
+    padding: 1rem;
     border-bottom: 2px solid #ccc;
+    max-height: calc(100vh - 200px);
 `;
 
+// based on sender or ai, set the color for sender and positioning
 const Message = styled.div`
-    background: ${(props) => (props.sender === "User" ? "#353755" : "#777")};
+    background: ${(props) => (props.sender === "user" ? "#353755" : "#777")};
     color: white;
     padding: 8px;
     border-radius: 8px;
     margin: 5px 0;
-    align-self: ${(props) => (props.sender === "User" ? "flex-end" : "flex-start")};
-    max-width: 90%;
+    align-self: ${(props) => (props.sender === "user" ? "flex-end" : "flex-start")};
+    max-width: 100%;
+    word-wrap: break-word;
+    white-space: pre-wrap;
 `;
 
 const InputContainer = styled.div`
     display: flex;
     padding: 10px;
     gap: 10px;
+    align-items: center;
 `;
 
-const ChatInput = styled.input`
+const ChatInput = styled.textarea`
     flex: 1;
     padding: 8px;
     border: 2px solid #ccc;
     border-radius: 4px;
-    &:disabled {
-        background-color: #f0f0f0;
-        cursor: not-allowed;
-    }
+    resize: none;
+    min-height: 40px;
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 16px;
+    line-height: 1.5;
 `;
 
 const SendButton = styled.button`
@@ -164,10 +231,6 @@ const SendButton = styled.button`
     cursor: pointer;
     &:hover {
         background: #555;
-    }
-    &:disabled {
-        background: #999;
-        cursor: not-allowed;
     }
 `;
 

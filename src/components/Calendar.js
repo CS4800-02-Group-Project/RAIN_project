@@ -200,6 +200,7 @@ const handleOutlookLogin = () => {
                     <StyledCalendar 
                         onChange={setSelectedDate} 
                         value={selectedDate}
+                        calendarType="gregory"
                         tileContent={tileContent}
                         tileClassName={tileClassName}
                     />
@@ -227,41 +228,6 @@ const handleOutlookLogin = () => {
         </CalendarContainer>
     );
 }
-
-const CalendarContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 400px;
-    height: auto;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    background: #E0E4EE;
-    padding: 37px;
-`;
-
-const StyledCalendar = styled(Calendar)`
-    width: 100%;
-    border: none;
-    background: white;
-    border-radius: 8px;
-
-    .has-event {
-        background-color:rgb(69, 201, 57); 
-        color: black; 
-        font-weight: bold; 
-        border-radius: 50%; 
-    }
-
-    .react-calendar__tile--now {
-        background: #ffff76;
-    }
-
-    .react-calendar__tile--active {
-        background: #006edc;
-        color: white;
-    }
-`;
 
 const LoadingOverlay = styled.div`
     padding: 20px;
@@ -297,16 +263,6 @@ const EventDot = styled.div`
     display: none;
 `;
 
-const EventDetails = styled.div`
-    margin-top: 20px;
-    text-align: center;
-    font-size: 16px;
-    background: white;
-    padding: 10px;
-    border-radius: 6px;
-    width: 100%;
-`;
-
 const ButtonContainer = styled.div`
     display: flex;
     gap: 10px;
@@ -332,6 +288,7 @@ const AddEventButton = styled.button`
 `;
 
 const OutlookButton = styled(AddEventButton)`
+    flex: 1;
     background-color: #0078d4;
 
     &:hover {
@@ -342,4 +299,84 @@ const OutlookButton = styled(AddEventButton)`
         background-color: #cccccc;
         cursor: not-allowed;
     }
+`;
+
+const CalendarContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background: #E0E4EE;
+    margin: auto;
+`;
+
+const StyledCalendar = styled(Calendar)`
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: white;
+  border-radius: 8px;
+
+  /* Override internal class styles */
+  .react-calendar__navigation {
+    background-color: #dbeafe;
+    border-bottom: 1px solid #cbd5e1;
+    padding: 8px 0;
+  }
+
+  .react-calendar__tile {
+    padding: 20px 0;
+    font-size: 1rem;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+  }
+
+  .has-event {
+        background-color:rgb(69, 201, 57); 
+        color: black; 
+        font-weight: bold; 
+        border-radius: 50%; 
+    }
+
+  .react-calendar__tile--active {
+    background: #3b82f6;
+    color: white;
+    font-weight: bold;
+  }
+
+  .react-calendar__tile:enabled:hover {
+    background: #e0f2fe;
+    color: #1d4ed8;
+  }
+
+  .react-calendar__month-view__days__day--weekend {
+    color: black;
+  }
+
+  .react-calendar__tile--now {
+    background: #E0E4EE;
+    color: black;
+    font-weight: bold;
+  }
+
+    .react-calendar__month-view__weekdays__weekday {
+    font-weight: bold;
+    text-decoration: none;
+        abbr {
+        text-decoration: none; 
+        cursor: default;
+        }
+  }
+`;
+
+const EventDetails = styled.div`
+    flex: 1;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 24px;
+    background: white;
+    border-radius: 6px;
+    width: 100%;
 `;
