@@ -117,54 +117,72 @@ export default function InteractiveCalendar() {
             setIsLoading(false);
         }
     };
-const handleOutlookLogin = () => {
-    window.open('http://localhost:4999/login', '_blank');
-    setIsLoading(true);
-    console.log("Starting Outlook login process");
 
-    const pollInterval = setInterval(async () => {
-        try {
-            const response = await fetch('http://localhost:4999/emails', {
-                credentials: 'include'
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Received data from Outlook:", data);
-                
+
+    const handleOutlookLogin = () => {
+        window.open('http://localhost:4999/login', '_blank');
+        setIsLoading(true);
+        console.log("Starting Outlook login process");
+
+        const pollInterval = setInterval(async () => {
+            try {
+                    const response = await fetchWithRetry('http://localhost:4999/emails', {
+                        credentials: 'include',
+                    });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Received data from Outlook:", data);
+                    
+                    clearInterval(pollInterval);
+                    setIsLoading(false);
+                    
+                    if (data.user_email) {
+                        console.log("Storing user email:", data.user_email);
+                        sessionStorage.setItem('userEmail', data.user_email);
+                        setCurrentUser(data.user_email);
+                    }
+
+                    if (data.assignments && data.assignments.length > 0) {
+                        const newEvents = {};
+                        data.assignments.forEach(assignment => {
+                            const formattedDate = formatDate(assignment.due_date);
+                            if (formattedDate) {
+                                newEvents[formattedDate] = assignment.title;
+                            }
+                        });
+                        console.log("Setting new events from Outlook:", newEvents);
+                        setEvents(newEvents);
+                    }
+                } else if (response.status === 302) {
+                    console.log("Waiting for authentication...");
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error in polling:', error);
+                setError(error.message);
                 clearInterval(pollInterval);
                 setIsLoading(false);
-                
-                if (data.user_email) {
-                    console.log("Storing user email:", data.user_email);
-                    sessionStorage.setItem('userEmail', data.user_email);
-                    setCurrentUser(data.user_email);
-                }
-
-                if (data.assignments && data.assignments.length > 0) {
-                    const newEvents = {};
-                    data.assignments.forEach(assignment => {
-                        const formattedDate = formatDate(assignment.due_date);
-                        if (formattedDate) {
-                            newEvents[formattedDate] = assignment.title;
-                        }
-                    });
-                    console.log("Setting new events from Outlook:", newEvents);
-                    setEvents(newEvents);
-                }
-            } else if (response.status === 302) {
-                console.log("Waiting for authentication...");
-            } else {
-                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        } catch (error) {
-            console.error('Error in polling:', error);
-            setError(error.message);
-            clearInterval(pollInterval);
-            setIsLoading(false);
+        }, 2000);
+    };
+
+    const fetchWithRetry = async (url, options, retries = 5, delay = 1000) => {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) throw new Error(`Status: ${response.status}`);
+                return response;
+            } catch (err) {
+                if (i < retries - 1) {
+                    console.warn(`Retry ${i + 1} - ${err.message}`);
+                    await new Promise(res => setTimeout(res, delay));
+                } else {
+                    throw err;
+                }
+            }
         }
-    }, 2000);
-};
+    };
 
     const tileContent = ({ date, view }) => {
         if (view === 'month') {
