@@ -219,7 +219,14 @@ export default function InteractiveCalendar() {
                         tileClassName={tileClassName}
                     />
                     <EventDetails>
-                        <h3>Selected Date: {selectedDate.toISOString().split('T')[0]}</h3>
+                        <h3>
+                            {selectedDate.toLocaleDateString("en-US", {
+                                weekday: "long",
+                                month: "long",
+                                day: "numeric",
+                                year: "numeric",
+                            })}
+                        </h3>
                         {error ? (
                             <ErrorMessage>{error}</ErrorMessage>
                         ) : (
@@ -320,6 +327,8 @@ const CalendarContainer = styled.div`
     flex-direction: column;
     align-items: center;
     width: 100%;
+    height: 100%;
+    flex: 1;
     border: 2px solid #ccc;
     border-radius: 8px;
     background: #E0E4EE;
