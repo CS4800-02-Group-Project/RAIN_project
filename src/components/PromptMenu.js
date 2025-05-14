@@ -118,11 +118,13 @@ export default function PromptMenu() {
 const ChatContainer = styled.div`
     display: flex;
     flex-direction: column;
+    flex: 1;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     border: 2px solid #ccc;
     border-radius: 8px;
     background: #E0E4EE;
+    overflow: hidden;
 `;
 
 const ChatHistory = styled.div`
@@ -142,9 +144,30 @@ const Message = styled.div`
     margin: 5px 0;
     align-self: ${(props) => (props.sender === "user" ? "flex-end" : "flex-start")};
     max-width: 100%;
-    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: anywhere;
     white-space: pre-wrap;
+    overflow-x: auto;
+    * {
+        max-width: 100%;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    pre, code {
+        white-space: pre-wrap;
+        overflow-x: auto;
+        display: block;
+    }
+
+    table {
+        width: 100%;
+        overflow-x: auto;
+        display: block;
+    }
 `;
+    
+
 
 const InputContainer = styled.div`
     display: flex;
