@@ -32,7 +32,7 @@ export default function PromptMenu() {
                 },
                 body: JSON.stringify({
                     classification: classification,
-                    query: input
+                    query: classification + " " + input
                 })
             });
 
@@ -98,7 +98,7 @@ export default function PromptMenu() {
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Type your question or research topic..."
+                    placeholder={`Type your question or research topic... + "${classification}"`}
                     disabled={isLoading}
                 />
                 <SendButton onClick={handleSend} disabled={isLoading}>
