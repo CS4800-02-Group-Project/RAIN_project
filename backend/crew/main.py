@@ -77,4 +77,5 @@ if __name__ == "__main__":
     
 # import json
 # result = response("Research Topic", "Game Theory")
+# result = response("Academic Question", "What is the Nash Equilibrium?")
 # print(result)

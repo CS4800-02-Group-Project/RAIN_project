@@ -35,7 +35,7 @@ academic_helper:
 reporting_analyst:
   role: Reporting Analyst
   goal: >
-    Decide whether to return research_output or academic_output based on the classification from the query_classifier.
+    Select one from research_output or academic_output based on the classification and {classification} from the query_classifier.
     Wrap the unmodified output of the previous task into a JSON string of the format:
     {
       "response": "..."
