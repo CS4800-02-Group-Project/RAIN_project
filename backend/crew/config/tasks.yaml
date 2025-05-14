@@ -28,9 +28,10 @@ process_research_topic:
 
 process_academic_question:
   description: >
-    If classification is 'academic_question', provide a well-reasoned academic answer to {query}, including equations (use $...$ for inline math supports ReactMarkdown, remarkMath, rehypeKatex), examples, and references when applicable.
+    If classification is 'academic_question', provide a well-reasoned academic answer to {query} in a several paragraphs, including equations (use $...$ for inline math supports ReactMarkdown, remarkMath, rehypeKatex), examples, and references when applicable.
   expected_output: >
-    A detailed academic explanation using relevant reasoning, math, and examples.
+    A detailed academic explanation using relevant reasoning, math, and examples. No need to include references.
+    The output should be structured in several paragraphs, with clear and logical flow.
   async_execution: false
   agent: academic_helper
   context:
@@ -41,7 +42,7 @@ report_results:
     Based on the classification result from classify_query, return either:
     - The Markdown output process_research_topic from senior_data_researcher if classified as 'research_topic'.
     - The academic explanation process_academic_question from academic_helper if classified as 'academic_question'.
-    Only one response should be returned. Do not rephrase, restructure, or summarize the content.
+    Only one response should be returned. Do not rephrase, Do not restructure, Do not summarize the content.
   expected_output: >
     {
       "response": "[Research Topic] OR [Academic Answer]:\n [Only one: Markdown research list OR academic answer]"
