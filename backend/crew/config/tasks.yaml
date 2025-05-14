@@ -39,6 +39,7 @@ process_academic_question:
 
 report_results:
   description: >
+    State the classification result from classify_query and return the output from either process_research_topic or process_academic_question.
     Based on the classification result from classify_query, return either:
     - The Markdown output process_research_topic from senior_data_researcher if classified as 'research_topic'.
     - The academic explanation process_academic_question from academic_helper if classified as 'academic_question'.
