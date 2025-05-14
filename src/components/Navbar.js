@@ -10,6 +10,8 @@ export default function Navbar() {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
+      sessionStorage.removeItem('userEmail');
+      localStorage.removeItem('userEmail');
       navigate('/login');
     } catch (error) {
       console.error('Error signing out:', error);
@@ -44,16 +46,16 @@ export default function Navbar() {
 // Temporary navbar theme until further changes needed
 
 const Name = styled.div`
-  text-align: center;
   flex: 1;
   display: flex;
   font-size: 35px;
   align-items: center;
   font-style: italic;
-  font-family: "Lobster", cursive;
+  font-family: "Helvetica";
 `;
 
 const Page = styled.div`
+  display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
@@ -61,17 +63,18 @@ const Page = styled.div`
 `;
 
 const Container = styled.nav`
+  align-items: center;
+  flex-shrink: 0;
   background-color: #353755;
   color: white;
   display: flex;
   justify-content: space-between;
-  height: 5em;
+  height: 4em;
   gap: 2rem;
   padding: 0 1rem;
 
   ul {
     padding: 0;
-    padding-top: 15px;
     margin: 0;
     list-style: none;
     display: flex;

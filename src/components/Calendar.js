@@ -43,132 +43,146 @@ export default function InteractiveCalendar() {
     };
 
     useEffect(() => {
-        console.log("Calendar component mounted or user changed");
         const authInfo = checkAuthenticationSources();
-        
         const userEmail = authInfo.sessionEmail || authInfo.localEmail || 
-                         (authInfo.firebaseUser && authInfo.firebaseUser.email);
+                          (authInfo.firebaseUser && authInfo.firebaseUser.email);
         
-        if (userEmail) {
+        if (userEmail && !currentUser) {
             console.log("Found user email:", userEmail);
             setCurrentUser(userEmail);
-            fetchAssignmentsFromFirestore();
         } else {
-            console.log("No user email found in any storage");
             setIsLoading(false);
         }
-    }, [currentUser]); // Add currentUser as dependency
-
-const fetchAssignmentsFromFirestore = async () => {
-    try {
-        setIsLoading(true);
-        const authInfo = checkAuthenticationSources();
-        console.log("Auth info when fetching:", authInfo);
-
-        const userEmail = authInfo.sessionEmail || authInfo.localEmail || 
-                         (authInfo.firebaseUser && authInfo.firebaseUser.email);
-
-        if (!userEmail) {
-            console.error("No user email found in any storage");
-            setError("User not authenticated");
-            return;
+    }, []); 
+    
+    useEffect(() => {
+        if (currentUser) {
+            fetchAssignmentsFromFirestore();
         }
+    }, [currentUser]); 
 
-        console.log("Fetching assignments for:", userEmail);
-        
-
-        const usersRef = collection(db, 'users');
-        const q = query(usersRef, where("email", "==", userEmail));
-        const querySnapshot = await getDocs(q);
-        console.log("Query snapshot size:", querySnapshot.size); 
-
-        if (!querySnapshot.empty) {
-            const userDoc = querySnapshot.docs[0];
-            const assignmentsRef = collection(userDoc.ref, 'assignments');
-            const assignmentsSnapshot = await getDocs(assignmentsRef);
-            console.log("Found assignments:", assignmentsSnapshot.size); 
-
-            const newEvents = {};
-            assignmentsSnapshot.forEach(doc => {
-                const assignment = doc.data();
-                console.log("Processing assignment:", assignment); 
-                
-                if (assignment.due_date) {
-                    const formattedDate = formatDate(assignment.due_date);
-                    console.log(`Formatting date ${assignment.due_date} to ${formattedDate}`); 
-                    
-                    if (formattedDate) {
-                        newEvents[formattedDate] = assignment.title;
-                    }
-                }
-            });
-
-            console.log("Setting events:", newEvents); 
-            setEvents(newEvents);
-        } else {
-            console.log("No user document found for email:", userEmail); 
-        }
-    } catch (error) {
-        console.error('Error fetching assignments:', error);
-        setError(error.message);
-    } finally {
-        setIsLoading(false);
-    }
-};
-const handleOutlookLogin = () => {
-    window.open('http://localhost:4999/login', '_blank');
-    setIsLoading(true);
-    console.log("Starting Outlook login process");
-
-    const pollInterval = setInterval(async () => {
+    const fetchAssignmentsFromFirestore = async () => {
         try {
-            const response = await fetch('http://localhost:4999/emails', {
-                credentials: 'include'
-            });
+            setIsLoading(true);
+            const authInfo = checkAuthenticationSources();
+            console.log("Auth info when fetching:", authInfo);
+
+            const userEmail = authInfo.sessionEmail || authInfo.localEmail || 
+                            (authInfo.firebaseUser && authInfo.firebaseUser.email);
+
+            if (!userEmail) {
+                console.error("No user email found in any storage");
+                setError("User not authenticated");
+                return;
+            }
+
+            console.log("Fetching assignments for:", userEmail);
             
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Received data from Outlook:", data);
-                
-                clearInterval(pollInterval);
-                setIsLoading(false);
-                
-                if (data.user_email) {
-                    console.log("Storing user email:", data.user_email);
-                    sessionStorage.setItem('userEmail', data.user_email);
-                    setCurrentUser(data.user_email);
-                }
 
-                // // Then fetch assignments from Firestore
-                // if (data.status === "success") {
-                //     await fetchAssignmentsFromFirestore();
-                // }
+            const usersRef = collection(db, 'users');
+            const q = query(usersRef, where("email", "==", userEmail));
+            const querySnapshot = await getDocs(q);
+            console.log("Query snapshot size:", querySnapshot.size); 
 
-                // Finally process any new assignments from Outlook
-                if (data.assignments && data.assignments.length > 0) {
-                    const newEvents = {};
-                    data.assignments.forEach(assignment => {
+            if (!querySnapshot.empty) {
+                const userDoc = querySnapshot.docs[0];
+                const assignmentsRef = collection(userDoc.ref, 'assignments');
+                const assignmentsSnapshot = await getDocs(assignmentsRef);
+                console.log("Found assignments:", assignmentsSnapshot.size); 
+
+                const newEvents = {};
+                assignmentsSnapshot.forEach(doc => {
+                    const assignment = doc.data();
+                    console.log("Processing assignment:", assignment); 
+                    
+                    if (assignment.due_date) {
                         const formattedDate = formatDate(assignment.due_date);
+                        console.log(`Formatting date ${assignment.due_date} to ${formattedDate}`); 
+                        
                         if (formattedDate) {
                             newEvents[formattedDate] = assignment.title;
                         }
-                    });
-                    console.log("Setting new events from Outlook:", newEvents);
-                    setEvents(newEvents);
-                }
-            } else if (response.status === 302) {
-                console.log("Waiting for authentication...");
+                    }
+                });
+
+                console.log("Setting events:", newEvents); 
+                setEvents(newEvents);
             } else {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                console.log("No user document found for email:", userEmail); 
             }
         } catch (error) {
-            console.error('Error in polling:', error);
+            console.error('Error fetching assignments:', error);
             setError(error.message);
-            clearInterval(pollInterval);
+        } finally {
             setIsLoading(false);
         }
-    }, 2000);
-};
+    };
+
+
+    const handleOutlookLogin = () => {
+        window.open('http://localhost:4999/login', '_blank');
+        setIsLoading(true);
+        console.log("Starting Outlook login process");
+
+        const pollInterval = setInterval(async () => {
+            try {
+                    const response = await fetchWithRetry('http://localhost:4999/emails', {
+                        credentials: 'include',
+                    });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Received data from Outlook:", data);
+                    
+                    clearInterval(pollInterval);
+                    setIsLoading(false);
+                    
+                    if (data.user_email) {
+                        console.log("Storing user email:", data.user_email);
+                        sessionStorage.setItem('userEmail', data.user_email);
+                        setCurrentUser(data.user_email);
+                    }
+
+                    if (data.assignments && data.assignments.length > 0) {
+                        const newEvents = {};
+                        data.assignments.forEach(assignment => {
+                            const formattedDate = formatDate(assignment.due_date);
+                            if (formattedDate) {
+                                newEvents[formattedDate] = assignment.title;
+                            }
+                        });
+                        console.log("Setting new events from Outlook:", newEvents);
+                        setEvents(newEvents);
+                    }
+                } else if (response.status === 302) {
+                    console.log("Waiting for authentication...");
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error in polling:', error);
+                setError(error.message);
+                clearInterval(pollInterval);
+                setIsLoading(false);
+            }
+        }, 2000);
+    };
+
+    const fetchWithRetry = async (url, options, retries = 5, delay = 1000) => {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) throw new Error(`Status: ${response.status}`);
+                return response;
+            } catch (err) {
+                if (i < retries - 1) {
+                    console.warn(`Retry ${i + 1} - ${err.message}`);
+                    await new Promise(res => setTimeout(res, delay));
+                } else {
+                    throw err;
+                }
+            }
+        }
+    };
 
     const tileContent = ({ date, view }) => {
         if (view === 'month') {
@@ -200,11 +214,19 @@ const handleOutlookLogin = () => {
                     <StyledCalendar 
                         onChange={setSelectedDate} 
                         value={selectedDate}
+                        calendarType="gregory"
                         tileContent={tileContent}
                         tileClassName={tileClassName}
                     />
                     <EventDetails>
-                        <h3>Selected Date: {selectedDate.toISOString().split('T')[0]}</h3>
+                        <h3>
+                            {selectedDate.toLocaleDateString("en-US", {
+                                weekday: "long",
+                                month: "long",
+                                day: "numeric",
+                                year: "numeric",
+                            })}
+                        </h3>
                         {error ? (
                             <ErrorMessage>{error}</ErrorMessage>
                         ) : (
@@ -227,41 +249,6 @@ const handleOutlookLogin = () => {
         </CalendarContainer>
     );
 }
-
-const CalendarContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 400px;
-    height: auto;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    background: #E0E4EE;
-    padding: 37px;
-`;
-
-const StyledCalendar = styled(Calendar)`
-    width: 100%;
-    border: none;
-    background: white;
-    border-radius: 8px;
-
-    .has-event {
-        background-color:rgb(69, 201, 57); 
-        color: black; 
-        font-weight: bold; 
-        border-radius: 50%; 
-    }
-
-    .react-calendar__tile--now {
-        background: #ffff76;
-    }
-
-    .react-calendar__tile--active {
-        background: #006edc;
-        color: white;
-    }
-`;
 
 const LoadingOverlay = styled.div`
     padding: 20px;
@@ -297,16 +284,6 @@ const EventDot = styled.div`
     display: none;
 `;
 
-const EventDetails = styled.div`
-    margin-top: 20px;
-    text-align: center;
-    font-size: 16px;
-    background: white;
-    padding: 10px;
-    border-radius: 6px;
-    width: 100%;
-`;
-
 const ButtonContainer = styled.div`
     display: flex;
     gap: 10px;
@@ -332,6 +309,7 @@ const AddEventButton = styled.button`
 `;
 
 const OutlookButton = styled(AddEventButton)`
+    flex: 1;
     background-color: #0078d4;
 
     &:hover {
@@ -342,4 +320,86 @@ const OutlookButton = styled(AddEventButton)`
         background-color: #cccccc;
         cursor: not-allowed;
     }
+`;
+
+const CalendarContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background: #E0E4EE;
+    margin: auto;
+`;
+
+const StyledCalendar = styled(Calendar)`
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: white;
+  border-radius: 8px;
+
+  /* Override internal class styles */
+  .react-calendar__navigation {
+    background-color: #dbeafe;
+    border-bottom: 1px solid #cbd5e1;
+    padding: 8px 0;
+  }
+
+  .react-calendar__tile {
+    padding: 20px 0;
+    font-size: 1rem;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+  }
+
+  .has-event {
+        background-color:rgb(69, 201, 57); 
+        color: black; 
+        font-weight: bold; 
+        border-radius: 50%; 
+    }
+
+  .react-calendar__tile--active {
+    background: #3b82f6;
+    color: white;
+    font-weight: bold;
+  }
+
+  .react-calendar__tile:enabled:hover {
+    background: #e0f2fe;
+    color: #1d4ed8;
+  }
+
+  .react-calendar__month-view__days__day--weekend {
+    color: black;
+  }
+
+  .react-calendar__tile--now {
+    background: #E0E4EE;
+    color: black;
+    font-weight: bold;
+  }
+
+    .react-calendar__month-view__weekdays__weekday {
+    font-weight: bold;
+    text-decoration: none;
+        abbr {
+        text-decoration: none; 
+        cursor: default;
+        }
+  }
+`;
+
+const EventDetails = styled.div`
+    flex: 1;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 24px;
+    background: white;
+    border-radius: 6px;
+    width: 100%;
 `;
