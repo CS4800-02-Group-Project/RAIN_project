@@ -48,7 +48,7 @@ class ResearchCrew():
     def process_research_topic(self) -> Task:
         return Task(
             description="Research the topic {query} using GoogleScholarScrapingTool and extract relevant papers",
-            expected_output="A Markdown-formatted list with paper details, such as title, authors, year, abstract and link. If any field is missing, use N/A. Do not fabricate information. ",
+            expected_output="A Markdown-formatted list with paper details, with title, authors, year, abstract and link. If any field is missing, use N/A. Do not fabricate information. ",
             agent=self.senior_data_researcher()
         )
 
@@ -56,7 +56,7 @@ class ResearchCrew():
     def report_results(self) -> Task:
         return Task(
             description="Format and present the research findings",
-            expected_output="Final formatted response",
+            expected_output="Final formatted response including a Markdown-formatted list with paper details with title, authors, year, abstract and link.",
             agent=self.reporting_analyst(),
             output_json=ChatResponse
         )
