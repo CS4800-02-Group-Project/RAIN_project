@@ -6,7 +6,11 @@ import "react-calendar/dist/Calendar.css";
 
 export default function InteractiveCalendar() {
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [events, setEvents] = useState({});
+    const [events, setEvents] = useState(() => {
+        // Initialize events from localStorage if available
+        const savedEvents = localStorage.getItem('calendarEvents');
+        return savedEvents ? JSON.parse(savedEvents) : {};
+    });
     const [isLoading, setIsLoading] = useState(true); 
     const [error, setError] = useState(null);
     const [currentUser, setCurrentUser] = useState(null); 
@@ -43,23 +47,31 @@ export default function InteractiveCalendar() {
     };
 
     useEffect(() => {
-        const authInfo = checkAuthenticationSources();
-        const userEmail = authInfo.sessionEmail || authInfo.localEmail || 
-                          (authInfo.firebaseUser && authInfo.firebaseUser.email);
-        
-        if (userEmail && !currentUser) {
-            console.log("Found user email:", userEmail);
-            setCurrentUser(userEmail);
-        } else {
-            setIsLoading(false);
-        }
+        const initializeCalendar = async () => {
+            const authInfo = checkAuthenticationSources();
+            const userEmail = authInfo.sessionEmail || authInfo.localEmail || 
+                        (authInfo.firebaseUser && authInfo.firebaseUser.email);
+            
+            if (userEmail) {
+                console.log("Found user email:", userEmail);
+                setCurrentUser(userEmail);
+                try {
+                    await fetchAssignmentsFromFirestore();
+                } catch (error) {
+                    console.error("Error fetching initial assignments:", error);
+                    setError(error.message);
+                }
+            } else {
+                setIsLoading(false);
+            }
+        };
+
+        initializeCalendar();
     }, []); 
     
     useEffect(() => {
-        if (currentUser) {
-            fetchAssignmentsFromFirestore();
-        }
-    }, [currentUser]); 
+        localStorage.setItem('calendarEvents', JSON.stringify(events));
+    }, [events]);
 
     const fetchAssignmentsFromFirestore = async () => {
         try {
