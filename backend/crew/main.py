@@ -1,16 +1,14 @@
 #!/usr/bin/env python
-import sys
-import asyncio
+
 import warnings
 import logging
 from dotenv import load_dotenv
 
-from datetime import datetime
+from research_crew import ResearchCrew
+from academic_crew import AcademicCrew
 
-from crew import Backend
 
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -27,17 +25,24 @@ logger = logging.getLogger(__name__)
 # Suppress specific warnings
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
+
 def response(classification, query):
     """
-    Run the crew.
+    Run the appropriate crew based on classification.
     """
     inputs = {
         'classification': classification,
         'query': query
     }
-    
+
     try:
-        return Backend().crew().kickoff(inputs=inputs)
+        if classification == "Research Topic":
+            return ResearchCrew().crew().kickoff(inputs=inputs)
+        elif classification == "Academic Question":
+            return AcademicCrew().crew().kickoff(inputs=inputs)
+        else:
+            return "No Classification found."
+            
     except Exception as e:
         logger.error(f"Error in run: {str(e)}")
         raise Exception(f"An error occurred while running the crew: {e}")
