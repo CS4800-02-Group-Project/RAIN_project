@@ -9319,7 +9319,7 @@ raf@^3.4.1:
     react-dom "^19.0.0"
     react-markdown "^8.0.6"
     react-router-dom "^7.3.0"
-    react-scripts "5.0.1"
+    react-scripts "^5.0.1"
     rehype-katex "^7.0.1"
     remark-math "^6.0.0"
     styled-components "^6.1.15"
@@ -9479,7 +9479,7 @@ react-router@7.3.0:
     set-cookie-parser "^2.6.0"
     turbo-stream "2.4.0"
 
-react-scripts@5.0.1:
+react-scripts@^5.0.1:
   version "5.0.1"
   resolved "https://registry.npmjs.org/react-scripts/-/react-scripts-5.0.1.tgz"
   integrity sha512-8VAmEm/ZAwQzJ+GOMLbBsTdDKOpuZh7RPs0UymvBR2vRk4iZWCskjbFnxqjrzoIvlNNRZ3QJFx6/qDSi6zSnaQ==

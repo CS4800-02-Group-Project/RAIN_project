@@ -100,6 +100,12 @@ export default function PromptMenu() {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder={`Type your question or research topic..."`}
                     disabled={isLoading}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleSend();
+                        }
+                    }}
                 />
                 <SendButton onClick={handleSend} disabled={isLoading}>
                     {isLoading ? 'Sending...' : 'Send'}
@@ -109,50 +115,78 @@ export default function PromptMenu() {
     );
 }
 
-
 const ChatContainer = styled.div`
     display: flex;
     flex-direction: column;
-    width: 500px;
-    height: 550px;
+    flex: 1;
+    width: 100%;
+    height: 100vh;
     border: 2px solid #ccc;
     border-radius: 8px;
     background: #E0E4EE;
-    padding: 10px;
+    overflow: hidden;
 `;
 
 const ChatHistory = styled.div`
     flex: 1;
     overflow-y: auto;
-    padding: 10px;
+    padding: 1rem;
     border-bottom: 2px solid #ccc;
+    max-height: calc(100vh - 200px);
 `;
 
+// based on sender or ai, set the color for sender and positioning
 const Message = styled.div`
-    background: ${(props) => (props.sender === "User" ? "#353755" : "#777")};
+    background: ${(props) => (props.sender === "user" ? "#353755" : "#777")};
     color: white;
     padding: 8px;
     border-radius: 8px;
     margin: 5px 0;
-    align-self: ${(props) => (props.sender === "User" ? "flex-end" : "flex-start")};
-    max-width: 90%;
+    align-self: ${(props) => (props.sender === "user" ? "flex-end" : "flex-start")};
+    max-width: 100%;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    overflow-x: auto;
+    * {
+        max-width: 100%;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    pre, code {
+        white-space: pre-wrap;
+        overflow-x: auto;
+        display: block;
+    }
+
+    table {
+        width: 100%;
+        overflow-x: auto;
+        display: block;
+    }
 `;
+    
+
 
 const InputContainer = styled.div`
     display: flex;
     padding: 10px;
     gap: 10px;
+    align-items: center;
 `;
 
-const ChatInput = styled.input`
+const ChatInput = styled.textarea`
     flex: 1;
     padding: 8px;
     border: 2px solid #ccc;
     border-radius: 4px;
-    &:disabled {
-        background-color: #f0f0f0;
-        cursor: not-allowed;
-    }
+    resize: none;
+    min-height: 40px;
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 16px;
+    line-height: 1.5;
 `;
 
 const SendButton = styled.button`
@@ -164,10 +198,6 @@ const SendButton = styled.button`
     cursor: pointer;
     &:hover {
         background: #555;
-    }
-    &:disabled {
-        background: #999;
-        cursor: not-allowed;
     }
 `;
 
@@ -188,76 +218,3 @@ const DropdownContainer = styled.div`
         border: 1px solid #ccc;
     }
 `;
-
-
-// Save for later use
-    /** 
-     * Create event based on selection from Calendar, sent request, capture request by CrewAI and create prompt message in chat box
-     * */
-
-    // function parsePythonStyleJSON(jsonStr) {
-    //     // Extract topic
-    //     const topicMatch = jsonStr.match(/'topic':\s*'([^']+)'/);
-    //     const topic = topicMatch ? topicMatch[1] : "";
-
-    //     // Extract entries array using regex to identify individual entry objects
-    //     const entryRegex = /{[^{}]*(?:{[^{}]*}[^{}]*)*}/g;
-    //     const entryMatches = jsonStr.match(entryRegex) || [];
-
-    //     const entries = entryMatches.map(entryStr => {
-    //         // Extract title
-    //         const titleMatch = entryStr.match(/'title':\s*'([^']+)'/);
-    //         const title = titleMatch ? titleMatch[1] : "";
-
-    //         // Extract authors
-    //         const authorsMatch = entryStr.match(/'authors':\s*(\[[^\]]+\])/);
-    //         let authors = [];
-    //         if (authorsMatch) {
-    //             const authorsStr = authorsMatch[1].replace(/'/g, '"');
-    //             try {
-    //                 authors = JSON.parse(authorsStr);
-    //             } catch (e) {
-    //                 console.error("Error parsing authors:", e);
-    //             }
-    //         }
-
-    //         // Extract year
-    //         const yearMatch = entryStr.match(/'year':\s*(\d+)/);
-    //         const year = yearMatch ? parseInt(yearMatch[1]) : 0;
-
-    //         // Extract abstract
-    //         const abstractMatch = entryStr.match(/'abstract':\s*'([^']+)'/);
-    //         const abstract = abstractMatch ? abstractMatch[1] : "";
-
-    //         // Extract source
-    //         const sourceMatch = entryStr.match(/'source':\s*'([^']+)'/);
-    //         const source = sourceMatch ? sourceMatch[1] : "";
-
-    //         // Extract doi_url
-    //         const doiMatch = entryStr.match(/'doi_url':\s*'([^']+)'/);
-    //         const doi_url = doiMatch ? doiMatch[1] : "";
-
-    //         // We'll create a simplified citations object
-    //         const citations = {};
-
-    //         return {
-    //             title,
-    //             authors,
-    //             year,
-    //             abstract,
-    //             source,
-    //             doi_url,
-    //             citations
-    //         };
-    //     });
-
-    //     return { topic, entries };
-    // }
-
-                // const parsedResponse = parsePythonStyleJSON(data.response);
-            // console.log(parsedResponse);
-
-            // // Format the AI response with chat and articles
-            // const formattedResponse = `chat: ${input}\n\narticles:\n${parsedResponse.entries.map(entry =>
-            //     `- ${entry.title} (${entry.year})\n  Authors: ${entry.authors.join(', ')}\n  Abstract: ${entry.abstract}\n  Source: ${entry.source}\n  DOI: ${entry.doi_url || 'N/A'}`
-            // ).join('\n\n')}`;

@@ -13,10 +13,10 @@ const Dashboard = () => {
             <Navbar/>
             <PageContainer>
                 <Section>
-                    <Calendar />
+                    <PromptMenu />
                 </Section>
                 <Section>
-                    <PromptMenu />
+                    <Calendar />
                 </Section>
             </PageContainer>
         </Content>
@@ -24,45 +24,28 @@ const Dashboard = () => {
 }
 
 const Content = styled.div`
-  background-color:rgb(246, 246, 246);
-  /* background-color:rgb(15, 22, 53); */
-  min-height: 100vh;
+  background-color: #f6f6f6;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 `;
 
 const PageContainer = styled.div`
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
   flex-grow: 1;
-  padding: 50px;
-  gap: 20px; 
-  max-width: 1200px; 
-  margin: 0 auto; 
-  padding-top: 100px;
-
-  /* Responsive design: Switch to column layout on smaller screens */
-  @media (max-width: 750px) {
-    flex-direction: column; 
-    align-items: center; /
-  }
+  overflow: hidden;
 `;
 
 const Section = styled.div`
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-  flex: 1; /* Allow sections to take equal space */
-  min-width: 400px; 
-  min-height: 500px;
-  height: 550px;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color:rgb(82, 84, 119);
+  width: 50%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+;
 
 
-  /* Adjust width for smaller screens */
   @media (max-width: 750px) {
     width: 100%; 
     max-width: 500px; 
